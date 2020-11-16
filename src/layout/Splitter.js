@@ -15,7 +15,7 @@ const Splitter = ({ column, index, onDrag, onDragEnd, onDragStart, style }) => {
       }
       lastPos.current = pos;
     },
-    [column, onDrag]
+    [column, index, onDrag]
   );
 
   const handleMouseUp = useCallback(
@@ -37,7 +37,7 @@ const Splitter = ({ column, index, onDrag, onDragEnd, onDragStart, style }) => {
     },
     [column, handleMouseMove, handleMouseUp, index, onDragStart]
   );
-
+  console.log(`render Splitter`);
   const className = cx("Splitter", { column });
   return (
     <div className={className} style={style} onMouseDown={handleMouseDown} />
