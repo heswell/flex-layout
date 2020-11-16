@@ -1,0 +1,13 @@
+.Splitter {
+  background-color: white;
+}
+
+.Splitter.column {
+  cursor: ns-resize;
+  height: 6px;
+}
+
+.Splitter:not(.column) {
+  cursor: ew-resize;
+  width: 6px;
+}
