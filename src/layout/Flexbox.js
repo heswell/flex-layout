@@ -1,10 +1,14 @@
 import React, { forwardRef, useCallback, useRef, useState } from "react";
 import Splitter from "./Splitter";
+import useLayout from "./useLayout";
 import { useChildRefs } from "./useChildRefs";
 
 import "./Flexbox.css";
 const Flexbox = React.memo(
-  forwardRef(function Flexbox({ children, column, style }, ref) {
+  forwardRef(function Flexbox(props, ref) {
+    const [layoutModel, dispatch] = useLayout("Flexbox", props);
+    console.log({ layoutModel });
+    const { children, column, style } = props;
     const flexDirection = column ? "column" : "row";
     const childRefs = useChildRefs(children);
     const [sizes, setSizes] = useState([]);
@@ -35,7 +39,8 @@ const Flexbox = React.memo(
 
     const handleDragEnd = useCallback(() => {
       console.log(`handleDragEnd `);
-    }, []);
+      dispatch({ type: "splitter-resize" });
+    }, [dispatch]);
 
     const createSplitter = (i) => (
       <Splitter
@@ -62,7 +67,9 @@ const Flexbox = React.memo(
           : styles[i];
 
       const dolly = React.cloneElement(component, {
+        dispatch,
         key: i,
+        layoutModel: layoutModel.children[i],
         ref: childRefs[i],
         style
       });
