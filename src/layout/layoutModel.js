@@ -2,10 +2,25 @@ import React from "react";
 import { uuid } from "@heswell/utils";
 import { typeOf } from "./utils";
 
-export const getLayoutModel = (type, { children, id }, path = "0") => {
+export const getManagedDimension = (style) =>
+  style.flexDirection === "column" ? ["height", "width"] : ["width", "height"];
+
+export const getLayoutModel = (
+  type,
+  { children, id, style, ...props },
+  path = "0"
+) => {
+  if (type === "Flexbox") {
+    style = {
+      ...style,
+      display: "flex",
+      flexDirection: props.column ? "column" : "row"
+    };
+  }
   return {
     id: id || uuid(),
     path,
+    style,
     type,
     children: getLayoutModelChildren(children, path)
   };

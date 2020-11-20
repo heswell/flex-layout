@@ -9,9 +9,11 @@ const useLayout = (layoutType, props) => {
 
   const dispatch =
     props.dispatch ||
-    ((action) => setLayoutModel((state) => layoutReducer(state, action)));
+    ((action) => {
+      setLayoutModel((state) => layoutReducer(state, action));
+    });
 
-  return [layoutModel, dispatch];
+  return [props.layoutModel || layoutModel, dispatch];
 };
 
 export default useLayout;

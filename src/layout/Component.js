@@ -1,12 +1,9 @@
-import React, { forwardRef } from "react";
+import React from "react";
 import "./Component.css";
 
-const Component = React.memo(
-  forwardRef(function Component({ style }, ref) {
-    return <div className="Component" ref={ref} style={style} />;
-  })
-);
-
+const Component = function Component({ id, isChanged, style }, ref) {
+  return <div className="Component" style={style} />;
+};
 Component.displayName = "Component";
 
 export default Component;
