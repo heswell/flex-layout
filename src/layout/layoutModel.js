@@ -9,6 +9,7 @@ export const getLayoutModel = (
   { resizeable, style, children, ...props },
   path = "0"
 ) => {
+  debugger;
   if (type === "Flexbox") {
     style = {
       ...style,

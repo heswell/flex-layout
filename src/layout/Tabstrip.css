@@ -1,0 +1,99 @@
+.Tabstrip {
+  overflow: hidden;
+  display: flex;
+  width: 100%;
+}
+
+.Tabstrip.overflowing {
+  padding-right: 24px;
+}
+
+.tabstrip-inner-sleeve {
+  transition: all 0.4s linear;
+  height: 100%;
+  overflow: hidden;
+}
+
+.tabstrip-inner {
+  transition: transform 0.3s;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.Tabstrip .tabstrip-inner.resizeable .Tab {
+  transition: width 0.4s linear;
+}
+
+.TabstripOverflow {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 24px;
+  color: black;
+  background-color: #ddd;
+}
+
+.TabstripOverflow:before {
+  content: "V";
+  position: absolute;
+  left: 9px;
+  top: 10px;
+  font-size: 13px;
+  width: 16px;
+  height: 100%;
+}
+
+.TabstripOverflow:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.Tabstrip .Tab {
+  flex: 0 0 auto;
+  display: inline-flex;
+  height: 100%;
+  white-space: nowrap;
+}
+
+.Tab .tab-caption {
+  box-sizing: border-box;
+  text-decoration: none;
+  padding: 3px 6px;
+  display: block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  overflow: hidden;
+  margin-left: -1px;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: inherit;
+}
+
+.Tab:not(.active) {
+  background: #ccc;
+  color: white;
+}
+.Tab.active {
+  background: white;
+}
+.Tab:hover .close {
+  visibility: visible;
+}
+
+.Tab .close {
+  font-size: 16px;
+  padding: 2px 2px 0 0;
+  cursor: pointer;
+  visibility: hidden;
+}

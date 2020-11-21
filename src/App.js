@@ -68,16 +68,16 @@ export default function App() {
                 />
               </Flexbox>
             </Flexbox>
-            <Component
-              id="pink"
-              resizeable
-              style={{ backgroundColor: "pink", flex: 1 }}
-            />
-            <Component
-              id="yellow"
-              resizeable
-              style={{ backgroundColor: "yellow", flex: 1 }}
-            />
+            <Flexbox resizeable style={{ flex: 1 }}>
+              <Component
+                title="pink"
+                style={{ backgroundColor: "pink", flex: 1 }}
+              />
+              <Component
+                title="yellow"
+                style={{ backgroundColor: "yellow", flex: 1 }}
+              />
+            </Flexbox>
           </Flexbox>
         </Flexbox>
         <Component style={{ backgroundColor: "green", height: 32 }} />

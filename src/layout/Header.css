@@ -1,5 +1,7 @@
 .Header {
-  height: 32px;
+  font-family: Roboto, sans-serif;
+  font-size: 12px;
+  height: 26px;
   background-color: black;
   color: white;
 }
