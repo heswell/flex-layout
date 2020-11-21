@@ -1,3 +1,4 @@
+// TODO move to layoutModel
 export function followPath(model, path) {
   if (path.indexOf(model.path) !== 0) {
     throw Error(

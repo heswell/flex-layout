@@ -1,6 +1,6 @@
 import { Action } from "./layout-action";
 import { followPath, nextStep } from "./utils";
-import { getManagedDimension } from "./layoutModel";
+import { resetPath } from "./layoutModel";
 
 const MISSING_TYPE = undefined;
 
@@ -20,6 +20,7 @@ const MISSING_TYPE_HANDLER = (state) => {
 
 const handlers = {
   [Action.SPLITTER_RESIZE]: splitterResize,
+  [Action.REMOVE]: removeChild,
   [MISSING_TYPE]: MISSING_TYPE_HANDLER
 };
 
@@ -82,4 +83,86 @@ function swapChild(model, child, replacement) {
     children[idx] = swapChild(children[idx], child, replacement);
   }
   return { ...model, children };
+}
+
+function removeChild(model, action) {
+  return _removeChild(model, action.layoutModel);
+}
+
+function _removeChild(model, child) {
+  const { idx, finalStep } = nextStep(model.path, child.path);
+  let children = model.children.slice();
+
+  if (finalStep) {
+    children.splice(idx, 1);
+
+    if (model.type === "TabbedContainer" && model.active === idx) {
+      const nextActive = 0;
+      model.active = nextActive;
+      // children[nextActive].layoutStyle.display = Display.Flex;
+    }
+
+    if (children.length === 1 && model.type.match(/Flexbox|TabbedContainer/)) {
+      return unwrap(model, children[0]);
+    }
+  } else {
+    children[idx] = _removeChild(children[idx], child);
+  }
+
+  children = children.map((child, i) => resetPath(child, `${model.path}.${i}`));
+
+  return { ...model, children };
+}
+
+function unwrap(layoutModel, child) {
+  const {
+    path,
+    drag,
+    type,
+    style: { flexBasis, flexGrow, flexShrink, width, height },
+    layoutStyle: {
+      flexBasis: layoutBasis,
+      flexGrow: layoutGrow,
+      flexShrink: layoutShrink
+    }
+  } = layoutModel;
+
+  let unwrappedChild = resetPath(child, path);
+  if (path === "0") {
+    unwrappedChild = {
+      ...unwrappedChild,
+      drag,
+      //TODO get this bit right, do we need top, left as well ?
+      style: {
+        ...child.style,
+        width,
+        height
+      },
+      computedStyle: layoutModel.computedStyle
+    };
+  } else if (type === "Flexbox") {
+    const dim =
+      layoutModel.style.flexDirection === "column" ? "height" : "width";
+    const {
+      style: { [dim]: size, ...style },
+      layoutStyle: { [dim]: layoutSize, ...layoutStyle }
+    } = unwrappedChild;
+    unwrappedChild = {
+      ...unwrappedChild,
+      drag,
+      style: {
+        ...style,
+        flexGrow,
+        flexShrink,
+        flexBasis
+      },
+      layoutStyle: {
+        ...layoutStyle,
+        layoutGrow,
+        layoutShrink,
+        layoutBasis
+      }
+    };
+  }
+  return unwrappedChild;
 }

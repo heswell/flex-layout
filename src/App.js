@@ -32,13 +32,17 @@ export default function App() {
         style={{ height: 1000, width: 1200 }}
         onLayoutChange={handleLayoutChange}
       >
-        <Flexbox style={{ flex: 1 }} id="jim-bob">
-          <View resizeable style={{ minWidth: 50, width: 100 }}>
+        <Flexbox style={{ flex: 1 }}>
+          <View resizeable style={{ minWidth: 50, width: 200 }}>
             <Red style={{ height: "100%" }} />
           </View>
           <Flexbox resizeable column style={{ flex: 1 }}>
             <Flexbox resizeable style={{ flex: 1 }}>
-              <View header resizeable style={{ minWidth: 50, width: 150 }}>
+              <View
+                header={{ closeButton: true, title: "A Study in Brown" }}
+                resizeable
+                style={{ minWidth: 50, width: 150 }}
+              >
                 <Brown style={{ height: "100%" }} />
               </View>
               <Component

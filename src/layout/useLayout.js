@@ -24,9 +24,11 @@ import { getLayoutModel } from "./layoutModel"; // TODO allow props to specify l
     props.dispatch ||
     ((action) => {
       const nextLayoutModel = layoutReducer(state, action);
-      setState(nextLayoutModel);
-      if (props.onLayoutChange) {
-        props.onLayoutChange(nextLayoutModel);
+      if (nextLayoutModel !== state) {
+        setState(nextLayoutModel);
+        if (props.onLayoutChange) {
+          props.onLayoutChange(nextLayoutModel);
+        }
       }
     });
 

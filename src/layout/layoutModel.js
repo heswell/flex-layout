@@ -46,16 +46,16 @@ function getLayoutModelChildren(children, path) {
 }
 
 export function resetPath(layoutModel, path) {
-  if (layoutModel.$path === path) {
+  if (layoutModel.path === path) {
     return layoutModel;
   }
   return {
     ...layoutModel,
-    $path: path,
+    path,
     children:
       layoutModel.children &&
       layoutModel.children.map((child, i) => {
-        if (!child.$path) {
+        if (!child.path) {
           return child;
         } else {
           return resetPath(child, `${path}.${i}`);
