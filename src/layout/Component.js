@@ -1,4 +1,6 @@
 import React from "react";
+import { registerComponent } from "./registry/ComponentRegistry";
+
 import "./Component.css";
 
 const Component = function Component({ id, isChanged, style }, ref) {
@@ -7,3 +9,5 @@ const Component = function Component({ id, isChanged, style }, ref) {
 Component.displayName = "Component";
 
 export default Component;
+
+registerComponent("Component", Component, true);

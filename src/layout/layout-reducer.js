@@ -57,7 +57,7 @@ function splitterResize(state, { layoutModel, sizes }) {
     })
   };
 
-  const result = replaceChild(state, target, manualLayout);
+  const result = swapChild(state, target, manualLayout);
   return result;
 }
 
@@ -73,62 +73,13 @@ function applySize(style, dim, newSize) {
   };
 }
 
-function replaceChild(model, child, replacement) {
+function swapChild(model, child, replacement) {
   const { idx, finalStep } = nextStep(model.path, child.path);
   const children = model.children.slice();
   if (finalStep) {
-    // can replacement evcer be an array - there used to be provision for that here
-    let newChild = replacement;
-    const {
-      style: { left: _1, top: _2, flex: _3, width, height, ...style }
-    } = newChild;
-    if (
-      newChild.resizeable &&
-      newChild.layoutStyle.flexBasis !== "auto" &&
-      (width !== undefined || height !== undefined)
-    ) {
-      if (model.type === "FlexBox") {
-        const [dim] = getManagedDimension(model.style);
-        const { flexGrow, flexShrink, [dim]: size } = child.layoutStyle;
-        const flexStyle = {
-          flexBasis: "auto",
-          flexGrow,
-          flexShrink,
-          [dim]: size
-        };
-        const {
-          layoutStyle: { width: _w, height: _h, ...layoutStyle }
-        } = newChild;
-        newChild = {
-          ...newChild,
-          path: child.path, // if replacement might be a layout, need to cascade path change
-          style: {
-            ...style,
-            ...flexStyle
-          },
-          layoutStyle: {
-            ...layoutStyle,
-            ...flexStyle
-          }
-        };
-      } else {
-        const { width, height } = child.layoutStyle; // what else do we need to copy across
-        newChild = {
-          ...newChild,
-          path: child.path, // if replacement might be a layout, need to cascade path change
-          style: {
-            ...style,
-            width,
-            height
-          },
-          layoutStyle: child.layoutStyle // need to take just the 'outerLayoutStyles' from target, retaining innerLayoutSTyles
-        };
-      }
-    }
-
-    children[idx] = newChild;
+    children[idx] = replacement;
   } else {
-    children[idx] = replaceChild(children[idx], child, replacement);
+    children[idx] = swapChild(children[idx], child, replacement);
   }
   return { ...model, children };
 }

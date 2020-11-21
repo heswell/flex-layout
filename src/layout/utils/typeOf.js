@@ -1,4 +1,4 @@
-export default function typeOf(element) {
+export function typeOf(element) {
   let type;
 
   if (element) {
@@ -21,3 +21,5 @@ export default function typeOf(element) {
 
   return type;
 }
+
+export const isTypeOf = (element, type) => typeOf(element) === type;

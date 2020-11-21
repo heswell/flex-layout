@@ -1,3 +1,4 @@
-export { default as isContainer } from "./isContainer";
+export * from "./styleUtils";
 export * from "./pathUtils";
-export { default as typeOf } from "./typeOf";
+export * from "./typeOf";
+export { default as componentFromLayout } from "./componentFromLayout";

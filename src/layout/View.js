@@ -1,5 +1,7 @@
 import React from "react";
 import Header from "./Header";
+import { registerComponent } from "./registry/ComponentRegistry";
+
 import "./View.css";
 
 const View = React.memo(function View(
@@ -16,3 +18,5 @@ const View = React.memo(function View(
 View.displayName = "View";
 
 export default View;
+
+registerComponent("View", View, true);

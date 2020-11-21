@@ -1,13 +1,12 @@
 import React from "react";
-import { uuid } from "@heswell/utils";
-import { typeOf } from "./utils";
+import { expandFlex, typeOf } from "./utils";
 
 export const getManagedDimension = (style) =>
   style.flexDirection === "column" ? ["height", "width"] : ["width", "height"];
 
 export const getLayoutModel = (
   type,
-  { children, id, style, ...props },
+  { resizeable, style, children, ...props },
   path = "0"
 ) => {
   if (type === "Flexbox") {
@@ -16,10 +15,16 @@ export const getLayoutModel = (
       display: "flex",
       flexDirection: props.column ? "column" : "row"
     };
+  } else if (style.flex) {
+    const { flex, ...otherStyles } = style;
+    style = {
+      ...otherStyles,
+      ...expandFlex(flex)
+    };
   }
   return {
-    id: id || uuid(),
     path,
+    resizeable,
     style,
     type,
     children: getLayoutModelChildren(children, path)
