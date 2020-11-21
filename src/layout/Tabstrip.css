@@ -1,0 +1,17 @@
+.Tabstrip {
+  height: 32px;
+  background-color: black;
+  color: white;
+}
+
+.Tab {
+  display: inline-block;
+  width: 100px;
+  height: 100%;
+  background-color: white;
+  border: 1px solid blue;
+}
+
+.Tab.selected {
+  background-color: yellow;
+}

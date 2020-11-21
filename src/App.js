@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Brown, Red } from "./sample-components";
 import * as sample from "./layout/examples";
 
-import { Component, Flexbox, View } from "./layout";
+import { Component, Flexbox, Tabs, View } from "./layout";
 
 import "./styles.css";
 
@@ -68,16 +68,10 @@ export default function App() {
                 />
               </Flexbox>
             </Flexbox>
-            <Component
-              id="pink"
-              resizeable
-              style={{ backgroundColor: "pink", flex: 1 }}
-            />
-            <Component
-              id="yellow"
-              resizeable
-              style={{ backgroundColor: "yellow", flex: 1 }}
-            />
+            <Tabs resizeable style={{ flex: 1 }}>
+              <Component style={{ backgroundColor: "pink" }} />
+              <Component style={{ backgroundColor: "yellow" }} />
+            </Tabs>
           </Flexbox>
         </Flexbox>
         <Component style={{ backgroundColor: "green", height: 32 }} />
@@ -88,6 +82,7 @@ export default function App() {
       <button onClick={() => load("layout2")}>Test2</button>
       <button onClick={() => load("layout3")}>Test3</button>
       <button onClick={() => load("layout4")}>Test4</button>
+      <button onClick={() => load("layout5")}>Test5</button>
     </>
   );
 }

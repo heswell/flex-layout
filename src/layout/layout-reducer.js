@@ -21,6 +21,7 @@ const MISSING_TYPE_HANDLER = (state) => {
 const handlers = {
   [Action.SPLITTER_RESIZE]: splitterResize,
   [Action.REMOVE]: removeChild,
+  [Action.SWITCH_TAB]: switchTab,
   [MISSING_TYPE]: MISSING_TYPE_HANDLER
 };
 
@@ -31,6 +32,29 @@ export default (state, action) => {
   );
   return (handlers[action.type] || MISSING_HANDLER)(state, action);
 };
+
+function switchTab(state, { path, nextIdx }) {
+  var target = followPath(state, path);
+  const manualLayout = {
+    ...target,
+    active: nextIdx,
+    children: target.children.map((child, i) => {
+      // TODO do we even need to do this ?
+      if (i === target.active) {
+        return {
+          ...child
+        };
+      } else if (i === nextIdx) {
+        return {
+          ...child
+        };
+      } else {
+        return child;
+      }
+    })
+  };
+  return swapChild(state, target, manualLayout);
+}
 
 function splitterResize(state, { layoutModel, sizes }) {
   console.log(`%csplitterResize ${sizes}`, "color: brown;font-weight: bold;");

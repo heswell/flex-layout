@@ -7,7 +7,8 @@ export const getManagedDimension = (style) =>
 export const getLayoutModel = (
   type,
   { resizeable, style, children, ...props },
-  path = "0"
+  path = "0",
+  parentType = null
 ) => {
   if (type === "Flexbox") {
     style = {
@@ -15,32 +16,42 @@ export const getLayoutModel = (
       display: "flex",
       flexDirection: props.column ? "column" : "row"
     };
-  } else if (style.flex) {
+  }
+
+  if (style.flex) {
     const { flex, ...otherStyles } = style;
     style = {
       ...otherStyles,
       ...expandFlex(flex)
     };
+  } else if (parentType === "Tabs") {
+    style = {
+      ...style,
+      ...expandFlex(1)
+    };
   }
+
   return {
     path,
     resizeable,
     style,
     type,
-    children: getLayoutModelChildren(children, path)
+    children: getLayoutModelChildren(type, children, path)
   };
 };
 
-function getLayoutModelChildren(children, path) {
+function getLayoutModelChildren(type, children, path) {
   // TODO don't recurse into children of non-layout
   if (React.isValidElement(children)) {
-    return [getLayoutModel(typeOf(children), children.props), `${path}.0`];
+    return [
+      getLayoutModel(typeOf(children), children.props, `${path}.0`, type)
+    ];
     // return [getLayoutModelDeprecated(children)];
   } else if (Array.isArray(children)) {
     return children
       .filter((child) => child)
       .map((child, i) =>
-        getLayoutModel(typeOf(child), child.props, `${path}.${i}`)
+        getLayoutModel(typeOf(child), child.props, `${path}.${i}`, type)
       );
   }
 }
