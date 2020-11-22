@@ -11,8 +11,8 @@ export default function App() {
   const [layout, setLayout] = useState();
 
   const handleLayoutChange = (layout) => {
-    console.log(JSON.stringify(layout, null, 2));
-    history.current.push(layout);
+    // console.log(JSON.stringify(layout, null, 2));
+    // history.current.push(layout);
   };
 
   const back = () => {
