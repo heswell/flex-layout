@@ -6,7 +6,9 @@
   position: relative;
   border-radius: 0;
   border: none;
-  padding: 2px 9px;
+  padding: 1px 9px;
+  display: flex;
+  align-items: center;
 }
 
 .Tab.selected {
@@ -30,4 +32,19 @@
   right: 0;
   bottom: 0;
   border: dotted cornflowerblue 2px;
+}
+.Tab .Tab-close {
+  position: relative;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+}
+
+.Tab .Tab-close:hover {
+  background-color: cornflowerblue;
+}
+
+.Tab .Tab-close .Icon {
+  transform: scale(0.75);
+  transform-origin: center center;
 }

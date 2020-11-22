@@ -57,7 +57,7 @@ const Tabs = (props) => {
 
   const renderTabs = () =>
     layoutModel.children.map((child, idx) => (
-      <Tab key={idx} label={titleFor(child)} deletable={child.removable} />
+      <Tab key={idx} label={child.title} deletable={child.removable} />
     ));
 
   return (
@@ -79,7 +79,3 @@ Tabs.displayName = "Tabs";
 export default Tabs;
 
 registerComponent("Tabs", Tabs, true);
-
-function titleFor(component) {
-  return (component.props && component.props.title) || "Tab X";
-}

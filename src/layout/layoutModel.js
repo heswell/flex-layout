@@ -6,7 +6,7 @@ export const getManagedDimension = (style) =>
 
 export const getLayoutModel = (
   type,
-  { active, removable, resizeable, style, children, ...props },
+  { active, removable, resizeable, style, children, title, ...props },
   path = "0",
   parentType = null
 ) => {
@@ -38,6 +38,7 @@ export const getLayoutModel = (
     removable,
     resizeable,
     style,
+    title,
     type,
     active,
     children: getLayoutModelChildren(type, children, path)

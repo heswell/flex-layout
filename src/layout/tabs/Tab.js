@@ -1,8 +1,17 @@
 import React, { forwardRef, useImperativeHandle, useRef } from "react";
 import cx from "classnames";
 import { useForkRef } from "../utils";
+import { CloseIcon } from "../icons";
 
 import "./Tab.css";
+
+const CloseButton = ({ onClick }) => {
+  return (
+    <div className="Tab-close" onClick={onClick}>
+      <CloseIcon />
+    </div>
+  );
+};
 
 const Tab = forwardRef(
   (
@@ -45,6 +54,12 @@ const Tab = forwardRef(
           onKeyUp(e, index);
       }
     };
+
+    const handleCloseButtonClick = (e) => {
+      e.stopPropagation();
+      onDelete(e, index);
+    };
+
     return (
       <button
         className={cx("Tab", { selected })}
@@ -55,7 +70,8 @@ const Tab = forwardRef(
         role="tab"
         tabIndex={selected ? undefined : -1}
       >
-        {label}
+        <span>{label}</span>
+        {deletable ? <CloseButton onClick={handleCloseButtonClick} /> : null}
       </button>
     );
   }
