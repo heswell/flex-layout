@@ -6,7 +6,7 @@ export const getManagedDimension = (style) =>
 
 export const getLayoutModel = (
   type,
-  { resizeable, style, children, ...props },
+  { active, removable, resizeable, style, children, ...props },
   path = "0",
   parentType = null
 ) => {
@@ -16,6 +16,8 @@ export const getLayoutModel = (
       display: "flex",
       flexDirection: props.column ? "column" : "row"
     };
+  } else if (type === "Tabs") {
+    active = active || 0;
   }
 
   if (style.flex) {
@@ -33,9 +35,11 @@ export const getLayoutModel = (
 
   return {
     path,
+    removable,
     resizeable,
     style,
     type,
+    active,
     children: getLayoutModelChildren(type, children, path)
   };
 };

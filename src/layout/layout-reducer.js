@@ -116,39 +116,34 @@ function removeChild(model, action) {
 function _removeChild(model, child) {
   const { idx, finalStep } = nextStep(model.path, child.path);
   let children = model.children.slice();
+  let { active, path, type } = model;
 
   if (finalStep) {
     children.splice(idx, 1);
 
-    if (model.type === "TabbedContainer" && model.active === idx) {
-      const nextActive = 0;
-      model.active = nextActive;
-      // children[nextActive].layoutStyle.display = Display.Flex;
+    if (type === "Tabs" && active >= idx) {
+      active = Math.max(0, active - 1);
     }
 
-    if (children.length === 1 && model.type.match(/Flexbox|TabbedContainer/)) {
+    if (children.length === 1 && type.match(/Flexbox|Tabs/)) {
       return unwrap(model, children[0]);
     }
   } else {
     children[idx] = _removeChild(children[idx], child);
   }
 
-  children = children.map((child, i) => resetPath(child, `${model.path}.${i}`));
+  children = children.map((child, i) => resetPath(child, `${path}.${i}`));
 
-  return { ...model, children };
+  return { ...model, active, children };
 }
 
+// Untested
 function unwrap(layoutModel, child) {
   const {
     path,
     drag,
     type,
-    style: { flexBasis, flexGrow, flexShrink, width, height },
-    layoutStyle: {
-      flexBasis: layoutBasis,
-      flexGrow: layoutGrow,
-      flexShrink: layoutShrink
-    }
+    style: { flexBasis, flexGrow, flexShrink, width, height }
   } = layoutModel;
 
   let unwrappedChild = resetPath(child, path);
@@ -168,8 +163,7 @@ function unwrap(layoutModel, child) {
     const dim =
       layoutModel.style.flexDirection === "column" ? "height" : "width";
     const {
-      style: { [dim]: size, ...style },
-      layoutStyle: { [dim]: layoutSize, ...layoutStyle }
+      style: { [dim]: size, ...style }
     } = unwrappedChild;
     unwrappedChild = {
       ...unwrappedChild,
@@ -179,12 +173,6 @@ function unwrap(layoutModel, child) {
         flexGrow,
         flexShrink,
         flexBasis
-      },
-      layoutStyle: {
-        ...layoutStyle,
-        layoutGrow,
-        layoutShrink,
-        layoutBasis
       }
     };
   }

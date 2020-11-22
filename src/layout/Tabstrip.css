@@ -1,17 +1,22 @@
 .Tabstrip {
   height: 32px;
-  background-color: black;
   color: white;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  border-top: solid 1px #ccc;
 }
 
 .Tab {
   display: inline-block;
   width: 100px;
-  height: 100%;
   background-color: white;
-  border: 1px solid blue;
+  color: grey;
+  border: none;
 }
 
 .Tab.selected {
-  background-color: yellow;
+  color: black;
+  font-weight: bold;
 }

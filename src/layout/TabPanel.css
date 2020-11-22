@@ -1,0 +1,7 @@
+.TabPanel {
+  flex: 1;
+}
+
+.TabPanel > * {
+  height: 100%;
+}

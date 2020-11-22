@@ -69,8 +69,9 @@ export default function App() {
               </Flexbox>
             </Flexbox>
             <Tabs resizeable style={{ flex: 1 }}>
-              <Component style={{ backgroundColor: "pink" }} />
-              <Component style={{ backgroundColor: "yellow" }} />
+              <Component removable style={{ backgroundColor: "pink" }} />
+              <Component removable style={{ backgroundColor: "yellow" }} />
+              <Component removable style={{ backgroundColor: "blue" }} />
             </Tabs>
           </Flexbox>
         </Flexbox>
