@@ -22,7 +22,8 @@ const Tab = forwardRef(
     const setRef = useForkRef(ref, root);
 
     useImperativeHandle(ref, () => ({
-      focus: () => root.current.focus()
+      focus: () => root.current.focus(),
+      measure: () => root.current.getBoundingClientRect()
     }));
 
     const handleClick = (e) => {
