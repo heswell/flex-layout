@@ -5,7 +5,7 @@ import useTabstrip from "./useTabstrip";
 import "./Tabstrip.css";
 
 const Tabstrip = (props) => {
-  const { tabProps, tabs } = useTabstrip(props);
+  const { tabProps, tabRef } = useTabstrip(props);
   const { children, style, closeButton, onClose, value } = props;
 
   const renderTabs = () =>
@@ -13,7 +13,7 @@ const Tabstrip = (props) => {
       React.cloneElement(child, {
         index,
         ...tabProps,
-        ref: tabs[index],
+        ref: tabRef[index],
         selected: index === value
       })
     );

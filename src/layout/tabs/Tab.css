@@ -1,12 +1,33 @@
 .Tab {
   display: inline-block;
-  width: 100px;
   background-color: white;
   color: grey;
   border: none;
+  position: relative;
+  border-radius: 0;
+  border: none;
+  padding: 2px 9px;
 }
 
 .Tab.selected {
   color: black;
   font-weight: bold;
+}
+
+.Tab:focus {
+  outline: none;
+}
+
+.Tab:focus-visible {
+  outline: none;
+}
+
+.Tab:focus-visible:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: dotted cornflowerblue 2px;
 }

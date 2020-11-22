@@ -52,6 +52,7 @@ const Tab = forwardRef(
         onKeyUp={handleKeyUp}
         ref={setRef}
         role="tab"
+        tabIndex={selected ? undefined : -1}
       >
         {label}
       </button>

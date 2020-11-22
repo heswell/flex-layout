@@ -111,6 +111,6 @@ export default function useTabstrip({
       onKeyDown: handleKeyDown,
       onKeyUp: handleKeyUp
     },
-    tabs
+    tabRef: tabs
   };
 }
