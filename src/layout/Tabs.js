@@ -1,8 +1,7 @@
 import React from "react";
 import useLayout from "./useLayout";
 import { Action } from "./layout-action";
-import Tabstrip, { Tab } from "./Tabstrip";
-import TabPanel from "./TabPanel";
+import { Tab, TabPanel, Tabstrip } from "./tabs";
 import { componentFromLayout, isTypeOf } from "./utils";
 import { registerComponent } from "./registry/ComponentRegistry";
 

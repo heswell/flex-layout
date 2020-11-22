@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useRef } from "react";
 import cx from "classnames";
-import { useForkRef } from "./utils";
-import { useChildRefs } from "./useChildRefs";
+import { useForkRef } from "../utils";
+import { useChildRefs } from "../useChildRefs";
 
 import "./Tabstrip.css";
 
@@ -65,7 +65,9 @@ var direction = {
   ArrowLeft: -1,
   ArrowUp: -1,
   ArrowRight: 1,
-  ArrowDown: 1
+  ArrowDown: 1,
+  Home: 0,
+  End: 0
 };
 
 const Tabstrip = ({
@@ -79,12 +81,12 @@ const Tabstrip = ({
   orientation = "horizontal",
   value
 }) => {
-  const tabRefs = useChildRefs(children);
+  const tabs = useChildRefs(children);
   const manualActivation = keyBoardActivation === "manual";
   const vertical = orientation === "vertical";
 
   function focusTab(tabIndex) {
-    tabRefs[tabIndex].current.focus();
+    tabs[tabIndex].current.focus();
   }
 
   function activateTab(e, tabIndex) {
@@ -92,15 +94,15 @@ const Tabstrip = ({
     focusTab(tabIndex);
   }
 
-  function switchTabOnArrowPress(e, tabIndex) {
+  function switchTabOnKeyPress(e, tabIndex) {
     const { key } = e;
-    if (direction[key]) {
+    if (direction[key] !== undefined) {
       e.preventDefault();
       let newTabIndex;
-      if (tabRefs[tabIndex + direction[key]]) {
+      if (tabs[tabIndex + direction[key]]) {
         newTabIndex = tabIndex + direction[key];
       } else if (key === "ArrowLeft" || key === "ArrowUp") {
-        newTabIndex = tabRefs.length - 1;
+        newTabIndex = tabs.length - 1;
       } else if (key === "ArrowRight" || key === "ArrowDown") {
         newTabIndex = 0;
       }
@@ -121,39 +123,23 @@ const Tabstrip = ({
 
   const handleKeyDown = (e, tabIndex) => {
     const key = e.key;
-
     switch (key) {
       case "End":
-        e.preventDefault();
-        if (manualActivation) {
-          focusTab(tabRefs.length - 1);
-        } else {
-          onChange(e, tabRefs.length - 1);
-        }
+        switchTabOnKeyPress(e, tabs.length - 1);
         break;
       case "Home":
-        e.preventDefault();
-        if (manualActivation) {
-          focusTab(0);
-        } else {
-          onChange(e, 0);
-        }
+        switchTabOnKeyPress(e, 0);
         break;
-
-      // ArrowKeys are in keydown
-      // to prevent page scroll
       case "ArrowLeft":
       case "ArrowRight":
         if (!vertical) {
-          switchTabOnArrowPress(e, tabIndex);
-          break;
+          switchTabOnKeyPress(e, tabIndex);
         }
         break;
       case "ArrowUp":
       case "ArrowDown":
         if (vertical) {
-          switchTabOnArrowPress(e, tabIndex);
-          break;
+          switchTabOnKeyPress(e, tabIndex);
         }
         break;
       default:
@@ -190,7 +176,7 @@ const Tabstrip = ({
         onDelete: handleDeleteTab,
         onKeyDown: handleKeyDown,
         onKeyUp: handleKeyUp,
-        ref: tabRefs[index],
+        ref: tabs[index],
         selected: index === value
       })
     );
