@@ -29,8 +29,7 @@ export default function useTabstrip(
 
   useLayoutEffect(() => {
     if (activeIndicator) {
-      const tab = tabs[value].current;
-      const tabRect = tab.measure();
+      const tabRect = tabs[value].current.measure();
       // we probably don't need to do this every time if we;re observng this anyway
       const rootRect = ref.current.getBoundingClientRect();
       const left = tabRect.left - rootRect.left;
@@ -123,7 +122,7 @@ export default function useTabstrip(
   };
 
   return {
-    indicatorProps: indicatorPos,
+    indicatorProps: activeIndicator ? indicatorPos : undefined,
     tabProps: {
       onClick: handleClick,
       onDelete: handleDeleteTab,

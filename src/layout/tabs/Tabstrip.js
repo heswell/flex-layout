@@ -7,14 +7,7 @@ import "./Tabstrip.css";
 const Tabstrip = (props) => {
   const root = useRef(null);
   const { indicatorProps, tabProps, tabRef } = useTabstrip(props, root);
-  const {
-    children,
-    activeIndicator = "bottom",
-    style,
-    closeButton,
-    onClose,
-    value
-  } = props;
+  const { children, style, closeButton, onClose, value } = props;
 
   const renderTabs = () =>
     React.Children.map(children, (child, index) =>
@@ -29,7 +22,7 @@ const Tabstrip = (props) => {
   return (
     <div className={cx("Tabstrip")} ref={root} role="tablist" style={style}>
       {renderTabs()}
-      {activeIndicator ? (
+      {indicatorProps ? (
         <div className="ActiveIndicator" {...indicatorProps} />
       ) : null}
       {closeButton ? <button onClick={onClose}>X</button> : null}
