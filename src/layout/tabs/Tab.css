@@ -1,0 +1,12 @@
+.Tab {
+  display: inline-block;
+  width: 100px;
+  background-color: white;
+  color: grey;
+  border: none;
+}
+
+.Tab.selected {
+  color: black;
+  font-weight: bold;
+}
