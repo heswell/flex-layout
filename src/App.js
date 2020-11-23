@@ -47,11 +47,10 @@ export default function App() {
               </View>
               <View resizeable style={{ flex: 1 }}>
                 <Toolbar
-                  stops={{ sm: 0, md: 100, lg: 200 }}
+                  stops={{ sm: 75, lg: 300 }}
                   getTools={(size) => {
                     switch (size) {
                       case "sm":
-                      case "md":
                         return [
                           [
                             "PaddingTop",

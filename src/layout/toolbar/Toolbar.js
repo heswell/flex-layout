@@ -16,6 +16,8 @@ import { MoreVerticalIcon } from "../icons";
 import "./Toolbar.css";
 
 const capitalize = (str) => str[0].toUpperCase() + str.slice(1);
+const byDescendingStopSize = ([, s1], [, s2]) => s2 - s1;
+const EMPTY_ARRAY = [];
 
 const Overflow = ({ onClick }) => {
   return (
@@ -28,7 +30,7 @@ const Overflow = ({ onClick }) => {
 const OverflowContainer = ({ tools }) => {
   return (
     <div className="OverflowContainer">
-      <Toolbar allowWrap={10} tools={tools} id="boogie" />
+      <Toolbar allowWrap={10} height="auto" tools={tools} id="boogie" />
     </div>
   );
 };
@@ -37,19 +39,27 @@ const Toolbar = ({
   maxRows = 2,
   children,
   className,
+  height: heightProp = 32,
+  id,
   sizes,
   tools,
-  stops,
+  stops: stopsProp,
   getTools = () => tools
 }) => {
   const root = useRef(null);
   const innerContainer = useRef(null);
-  const [height, setHeight] = useState(32);
+  const [height, setHeight] = useState(heightProp);
   const [size, setSize] = useState("lg");
   const [overflowing, setOverflowing] = useState(false);
   const [showOverflow, setShowOverflow] = useState(false);
+  const stops = stopsProp
+    ? Object.entries(stopsProp).sort(byDescendingStopSize)
+    : null;
+
+  const minWidth = stops ? stops[stops.length - 1][1] : 0;
 
   const handleOverflowClick = () => {
+    console.log("handleOverflowClick");
     setShowOverflow((show) => !show);
   };
 
@@ -110,13 +120,17 @@ const Toolbar = ({
         });
       });
     } else if (overflowing) {
+      if (id === "boogie") {
+        debugger;
+      }
+      console.log(`hide Popup #${id} ${overflowing}`);
       PopupService.hidePopup();
     }
-  }, [getOverflowedTools, handlePopupClosed, overflowing, showOverflow]);
+  }, [getOverflowedTools, handlePopupClosed, id, overflowing, showOverflow]);
 
   useResizeObserver(
     innerContainer,
-    ["height"],
+    heightProp === "auto" ? EMPTY_ARRAY : ["height"],
     ({ height: measuredHeight }) => {
       const rows = measuredHeight / 32;
       if (measuredHeight !== height) {
@@ -133,12 +147,9 @@ const Toolbar = ({
       }
     }
   );
-  const byDescendingStopSize = ([, s1], [, s2]) => s2 - s1;
   const stopFromWidth = (w) => {
     if (stops) {
-      for (let [name, size] of Object.entries(stops).sort(
-        byDescendingStopSize
-      )) {
+      for (let [name, size] of stops) {
         if (w >= size) {
           return name;
         }
@@ -147,15 +158,16 @@ const Toolbar = ({
   };
 
   // TODO set width only if stops configured
-  useResizeObserver(root, ["width"], ({ width: measuredWidth }) => {
-    if (stops) {
+  useResizeObserver(
+    root,
+    stops ? ["width"] : EMPTY_ARRAY,
+    ({ width: measuredWidth }) => {
       const stop = stopFromWidth(measuredWidth);
-      console.log(`width changes stop=${stop} size=${size}`);
       if (stop !== size) {
         setSize(stop);
       }
     }
-  });
+  );
 
   return (
     <div
@@ -163,7 +175,7 @@ const Toolbar = ({
         "overflow-open": showOverflow
       })}
       ref={root}
-      style={{ height }}
+      style={{ height, minWidth }}
     >
       <div className="Toolbar-inner" ref={innerContainer}>
         {renderTools()}
