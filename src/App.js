@@ -47,14 +47,64 @@ export default function App() {
               </View>
               <View resizeable style={{ flex: 1 }}>
                 <Toolbar
+                  stops={{ sm: 0, md: 100, lg: 200 }}
+                  getTools={(size) => {
+                    switch (size) {
+                      case "sm":
+                      case "md":
+                        return [
+                          [
+                            "PaddingTop",
+                            "PaddingRight",
+                            "PaddingBottom",
+                            "PaddingLeft"
+                          ],
+                          "close",
+                          "close",
+                          "close",
+                          "close",
+                          "close",
+                          "close",
+                          "close",
+                          "close"
+                        ];
+                      default:
+                        return [
+                          "close",
+                          "close",
+                          "close",
+                          [
+                            "PaddingTop",
+                            "PaddingRight",
+                            "PaddingBottom",
+                            "PaddingLeft"
+                          ],
+                          "close",
+                          "close",
+                          "close",
+                          "close",
+                          "close"
+                        ];
+                    }
+                  }}
+                />
+                <Component
+                  style={{ backgroundColor: "cornflowerblue", flex: 1 }}
+                />
+              </View>
+
+              <View resizeable style={{ flex: 1 }}>
+                <Toolbar
                   tools={[
                     "close",
                     "close",
                     "close",
-                    "close",
-                    "close",
-                    "close",
-                    "close",
+                    [
+                      "PaddingTop",
+                      "PaddingRight",
+                      "PaddingBottom",
+                      "PaddingLeft"
+                    ],
                     "close",
                     "close",
                     "close",
@@ -63,19 +113,29 @@ export default function App() {
                   ]}
                 />
                 <Component
-                  style={{ backgroundColor: "cornflowerblue", flex: 1 }}
+                  style={{ backgroundColor: "palegoldenrod", height: "100%" }}
                 />
               </View>
-
-              <Component
-                resizeable
-                style={{ backgroundColor: "palegoldenrod", flex: 1 }}
-              />
               <Flexbox resizeable column style={{ flex: 1 }}>
-                <Component
-                  resizeable
-                  style={{ backgroundColor: "purple", flex: 1 }}
-                />
+                <View resizeable style={{ flex: 1 }}>
+                  <Toolbar
+                    tools={[
+                      "close",
+                      "close",
+                      "close",
+                      "close",
+                      "close",
+                      "close",
+                      "close",
+                      "close",
+                      "close",
+                      "close"
+                    ]}
+                  />
+                  <Component
+                    style={{ backgroundColor: "purple", height: "100%" }}
+                  />
+                </View>
                 <Component
                   resizeable
                   style={{ backgroundColor: "lightgrey", flex: 1 }}

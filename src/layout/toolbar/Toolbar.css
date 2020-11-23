@@ -5,6 +5,14 @@
   align-items: flex-start;
 }
 
+.Toolbar.sm {
+  background-color: pink;
+}
+
+.Toolbar.md {
+  background-color: yellow;
+}
+
 .Toolbar .Toolbar-inner {
   width: 100%;
   overflow: hidden;
@@ -44,6 +52,18 @@
   margin: 6px 3px;
 }
 
+.Toolbar .ToolTray {
+  background-color: lightgrey;
+}
+
 .OverflowContainer {
   background-color: white;
+}
+
+.Popup .Toolbar {
+  min-width: 80px;
+}
+
+.Popup .Toolbar .ToolTray {
+  white-space: nowrap;
 }
