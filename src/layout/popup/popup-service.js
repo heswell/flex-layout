@@ -12,7 +12,7 @@ const _popups = new Map();
 function specialKeyHandler(e) {
   if (e.keyCode === 27 /* ESC */) {
     if (_popups.size) {
-      closeAllPopups();
+      closeAllPopups(e);
       console.log("unmount the open popup(s)");
     } else if (_dialogOpen) {
       console.log("unmount the open dialog");
@@ -32,20 +32,18 @@ function outsideMouseDownHandler(e) {
         return;
       }
     }
-    console.log(`close all popups`);
-    closeAllPopups();
+    closeAllPopups(e);
   }
 }
 
-function closeAllPopups() {
+function closeAllPopups(e) {
   if (_popups.size) {
     // onsole.log(`closeAllPopups`);
     const popupContainers = document.body.querySelectorAll(".react-popup");
     for (let i = 0; i < popupContainers.length; i++) {
-      console.log(`unmountComponentAtNode`);
       ReactDOM.unmountComponentAtNode(popupContainers[i]);
     }
-    popupClosed("*");
+    popupClosed(e, "*");
   }
 }
 
@@ -75,16 +73,16 @@ function popupOpened(name, onClose) {
   }
 }
 
-function popupClosed(name /*, group=null*/) {
+function popupClosed(e, name) {
   if (_popups.size) {
     if (name === "*") {
       _popups.forEach(({ onClose }) => {
-        onClose && onClose();
+        onClose && onClose(e);
       });
       _popups.clear();
     } else if (_popups.has(name)) {
       const { onClose } = _popups.get(name);
-      onClose && onClose();
+      onClose && onClose(e);
       _popups.delete(name);
     }
     //onsole.log('PopupService, popup closed ' + name + '  popups : ' + _popups);
@@ -143,11 +141,11 @@ export class PopupService {
     );
   }
 
-  static hidePopup(name = "anon", group = "all") {
+  static hidePopup(e, name = "anon", group = "all") {
     //onsole.log('PopupService.hidePopup name=' + name + ', group=' + group)
 
     if (_popups.has(name)) {
-      popupClosed(name, group);
+      popupClosed(e, name);
       ReactDOM.unmountComponentAtNode(
         document.body.querySelector(`.react-popup.${group}`)
       );

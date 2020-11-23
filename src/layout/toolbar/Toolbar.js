@@ -13,6 +13,7 @@ import { findFirstOverflow } from "./overflowUtils";
 import * as icon from "../icons";
 import useResizeObserver from "../responsive/useResizeObserver";
 import { MoreVerticalIcon } from "../icons";
+import { registerComponent } from "../registry/ComponentRegistry";
 
 import "./Toolbar.css";
 
@@ -162,3 +163,5 @@ const Toolbar = ({
 };
 
 export default Toolbar;
+
+registerComponent("Toolbar", Toolbar);
