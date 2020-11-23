@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Brown, Red } from "./sample-components";
 import * as sample from "./layout/examples";
+import { CloseIcon } from "./layout/icons";
 
 import { Component, Flexbox, Tabs, Toolbar, View } from "./layout";
 
@@ -47,6 +48,7 @@ export default function App() {
               </View>
               <View resizeable style={{ flex: 1 }}>
                 <Toolbar
+                  id="cornflowerblue"
                   stops={{ sm: 75, lg: 300 }}
                   getTools={(size) => {
                     switch (size) {
@@ -94,6 +96,7 @@ export default function App() {
 
               <View resizeable style={{ flex: 1 }}>
                 <Toolbar
+                  id="palegoldenrod"
                   tools={[
                     "close",
                     "close",
@@ -141,41 +144,38 @@ export default function App() {
                 />
               </Flexbox>
             </Flexbox>
-            <Tabs resizeable style={{ flex: 1 }}>
-              <Component
-                removable
-                style={{ backgroundColor: "pink" }}
-                title="Little Pinky"
-              />
-              <View
-                header={{ title: "Yellow Fever 2" }}
-                title="Yellow Fever"
-                removable
-              >
-                <Toolbar
-                  tools={[
-                    "close",
-                    "close",
-                    "close",
-                    "close",
-                    "close",
-                    "close",
-                    "close",
-                    "close",
-                    "close",
-                    "close",
-                    "close",
-                    "close"
-                  ]}
+            <Flexbox style={{ flex: 1 }}>
+              <Tabs resizeable style={{ flex: 1 }}>
+                <Component
+                  removable
+                  style={{ backgroundColor: "pink" }}
+                  title="Little Pinky"
                 />
-                <Component style={{ backgroundColor: "yellow", flex: 1 }} />
-              </View>
+                <View
+                  header={{ title: "Yellow Fever 2" }}
+                  title="Yellow Fever"
+                  removable
+                >
+                  <Toolbar>
+                    <input type="text" className="tool-text" value="text 1" />
+                    <input type="text" className="tool-text" value="text 2" />
+                    <input type="text" className="tool-text" value="text 3" />
+                    <input type="text" className="tool-text" value="text 4" />
+                    <CloseIcon />
+                  </Toolbar>
+                  <Component style={{ backgroundColor: "yellow", flex: 1 }} />
+                </View>
+                <Component
+                  removable
+                  style={{ backgroundColor: "blue" }}
+                  title="Blue Monday"
+                />
+              </Tabs>
               <Component
-                removable
-                style={{ backgroundColor: "blue" }}
-                title="Blue Monday"
+                resizeable
+                style={{ backgroundColor: "green", width: 50 }}
               />
-            </Tabs>
+            </Flexbox>
           </Flexbox>
         </Flexbox>
         <Component style={{ backgroundColor: "green", height: 32 }} />

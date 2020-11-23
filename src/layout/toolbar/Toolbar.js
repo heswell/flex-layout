@@ -1,31 +1,31 @@
 import React, {
+  forwardRef,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useRef,
   useState
 } from "react";
 import cx from "classnames";
+import ResponsiveContainer from "../responsive/ResponsiveContainer";
 import { PopupService } from "../popup";
 import { findFirstOverflow } from "./overflowUtils";
 
 import * as icon from "../icons";
-import useResizeObserver from "./useResizeObserver";
+import useResizeObserver from "../responsive/useResizeObserver";
 import { MoreVerticalIcon } from "../icons";
 
 import "./Toolbar.css";
 
 const capitalize = (str) => str[0].toUpperCase() + str.slice(1);
-const byDescendingStopSize = ([, s1], [, s2]) => s2 - s1;
 const EMPTY_ARRAY = [];
 
-const Overflow = ({ onClick }) => {
+const Overflow = forwardRef(function Overflow({ onClick }, ref) {
   return (
-    <button className="Toolbar-overflow" onClick={onClick}>
+    <button className="Toolbar-overflow" onClick={onClick} ref={ref}>
       <MoreVerticalIcon />
     </button>
   );
-};
+});
 
 const OverflowContainer = ({ tools }) => {
   return (
@@ -43,23 +43,18 @@ const Toolbar = ({
   id,
   sizes,
   tools,
-  stops: stopsProp,
-  getTools = () => tools
+  stops,
+  getTools = () => tools || React.Children.toArray(children)
 }) => {
   const root = useRef(null);
+  const overflowButton = useRef(null);
   const innerContainer = useRef(null);
   const [height, setHeight] = useState(heightProp);
   const [size, setSize] = useState("lg");
   const [overflowing, setOverflowing] = useState(false);
   const [showOverflow, setShowOverflow] = useState(false);
-  const stops = stopsProp
-    ? Object.entries(stopsProp).sort(byDescendingStopSize)
-    : null;
-
-  const minWidth = stops ? stops[stops.length - 1][1] : 0;
 
   const handleOverflowClick = () => {
-    console.log("handleOverflowClick");
     setShowOverflow((show) => !show);
   };
 
@@ -70,6 +65,12 @@ const Toolbar = ({
           return (
             <span className="ToolTray" key={index}>
               {renderTools(tool)}
+            </span>
+          );
+        } else if (React.isValidElement(tool)) {
+          return (
+            <span className="Tool" key={index}>
+              {tool}
             </span>
           );
         } else {
@@ -84,23 +85,17 @@ const Toolbar = ({
     [getTools, size]
   );
 
-  useLayoutEffect(() => {
-    if (sizes) {
-      console.log(`sizes ${JSON.stringify(sizes)}`);
-    }
-  }, [sizes]);
-
   const getOverflowedTools = useCallback(() => {
     const toolElements = Array.from(innerContainer.current.childNodes);
     const firstOverflowIdx = findFirstOverflow(toolElements, 64);
     return getTools(size).slice(firstOverflowIdx);
   }, [getTools, size]);
 
-  const handlePopupClosed = useCallback(() => {
-    if (showOverflow) {
+  const handlePopupClosed = useCallback((e) => {
+    if (e?.target && !overflowButton.current.contains(e.target)) {
       setShowOverflow(false);
     }
-  }, [showOverflow]);
+  }, []);
 
   useEffect(() => {
     if (showOverflow) {
@@ -120,9 +115,6 @@ const Toolbar = ({
         });
       });
     } else if (overflowing) {
-      if (id === "boogie") {
-        debugger;
-      }
       console.log(`hide Popup #${id} ${overflowing}`);
       PopupService.hidePopup();
     }
@@ -147,41 +139,25 @@ const Toolbar = ({
       }
     }
   );
-  const stopFromWidth = (w) => {
-    if (stops) {
-      for (let [name, size] of stops) {
-        if (w >= size) {
-          return name;
-        }
-      }
-    }
-  };
-
-  // TODO set width only if stops configured
-  useResizeObserver(
-    root,
-    stops ? ["width"] : EMPTY_ARRAY,
-    ({ width: measuredWidth }) => {
-      const stop = stopFromWidth(measuredWidth);
-      if (stop !== size) {
-        setSize(stop);
-      }
-    }
-  );
 
   return (
-    <div
+    <ResponsiveContainer
+      id={id}
+      breakPoints={stops}
       className={cx("Toolbar", className, size, {
         "overflow-open": showOverflow
       })}
       ref={root}
-      style={{ height, minWidth }}
+      onResize={setSize}
+      style={{ height }}
     >
       <div className="Toolbar-inner" ref={innerContainer}>
         {renderTools()}
       </div>
-      {overflowing ? <Overflow onClick={handleOverflowClick} /> : null}
-    </div>
+      {overflowing ? (
+        <Overflow onClick={handleOverflowClick} ref={overflowButton} />
+      ) : null}
+    </ResponsiveContainer>
   );
 };
 

@@ -45,7 +45,6 @@
   border: solid 1px lightgrey;
   box-sizing: border-box;
   display: inline-flex;
-  width: 20px;
   height: 20px;
   align-items: center;
   justify-content: center;
@@ -67,4 +66,11 @@
 
 .Popup .Toolbar .ToolTray {
   white-space: nowrap;
+}
+
+.Toolbar .tool-text {
+  width: 80px;
+  border-radius: 0;
+  border: solid 1px darkgrey;
+  border: none;
 }

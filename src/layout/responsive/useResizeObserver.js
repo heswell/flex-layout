@@ -25,6 +25,9 @@ const resizeObserver = new ResizeObserver((entries) => {
 export default function useResizeObserver(ref, dimensions, onResize) {
   useEffect(() => {
     const target = ref.current;
+    if (observedMap.has(target)) {
+      throw Error("useResizeObserver attemping to observe same element twice");
+    }
     const measurements = dimensions.reduce((map, dimension) => {
       map[dimension] = 0;
       return map;
