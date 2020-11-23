@@ -4,9 +4,19 @@ import { expandFlex, typeOf } from "./utils";
 export const getManagedDimension = (style) =>
   style.flexDirection === "column" ? ["height", "width"] : ["width", "height"];
 
+const theKidHasNoStyle = {};
+
 export const getLayoutModel = (
   type,
-  { active, removable, resizeable, style, children, title, ...props },
+  {
+    active,
+    removable,
+    resizeable,
+    style = theKidHasNoStyle,
+    children,
+    title,
+    ...props
+  },
   path = "0",
   parentType = null
 ) => {

@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Brown, Red } from "./sample-components";
 import * as sample from "./layout/examples";
 
-import { Component, Flexbox, Tabs, View } from "./layout";
+import { Component, Flexbox, Tabs, Toolbar, View } from "./layout";
 
 import "./styles.css";
 
@@ -45,24 +45,38 @@ export default function App() {
               >
                 <Brown style={{ height: "100%" }} />
               </View>
+              <View resizeable style={{ flex: 1 }}>
+                <Toolbar
+                  tools={[
+                    "close",
+                    "close",
+                    "close",
+                    "close",
+                    "close",
+                    "close",
+                    "close",
+                    "close",
+                    "close",
+                    "close",
+                    "close",
+                    "close"
+                  ]}
+                />
+                <Component
+                  style={{ backgroundColor: "cornflowerblue", flex: 1 }}
+                />
+              </View>
+
               <Component
-                id="cornflowerblue"
-                resizeable
-                style={{ backgroundColor: "cornflowerblue", flex: 1 }}
-              />
-              <Component
-                id="palegoldenrod"
                 resizeable
                 style={{ backgroundColor: "palegoldenrod", flex: 1 }}
               />
               <Flexbox resizeable column style={{ flex: 1 }}>
                 <Component
-                  id="purple"
                   resizeable
                   style={{ backgroundColor: "purple", flex: 1 }}
                 />
                 <Component
-                  id="lightgrey"
                   resizeable
                   style={{ backgroundColor: "lightgrey", flex: 1 }}
                 />
@@ -74,11 +88,29 @@ export default function App() {
                 style={{ backgroundColor: "pink" }}
                 title="Little Pinky"
               />
-              <Component
-                removable
-                style={{ backgroundColor: "yellow" }}
+              <View
+                header={{ title: "Yellow Fever 2" }}
                 title="Yellow Fever"
-              />
+                removable
+              >
+                <Toolbar
+                  tools={[
+                    "close",
+                    "close",
+                    "close",
+                    "close",
+                    "close",
+                    "close",
+                    "close",
+                    "close",
+                    "close",
+                    "close",
+                    "close",
+                    "close"
+                  ]}
+                />
+                <Component style={{ backgroundColor: "yellow", flex: 1 }} />
+              </View>
               <Component
                 removable
                 style={{ backgroundColor: "blue" }}
