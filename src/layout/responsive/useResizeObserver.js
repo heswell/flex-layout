@@ -28,15 +28,17 @@ export default function useResizeObserver(ref, dimensions, onResize) {
     if (observedMap.has(target)) {
       throw Error("useResizeObserver attemping to observe same element twice");
     }
-    const measurements = dimensions.reduce((map, dimension) => {
-      map[dimension] = 0;
-      return map;
-    }, {});
-    observedMap.set(target, { onResize, measurements });
-    resizeObserver.observe(target);
-    return () => {
-      resizeObserver.unobserve(target);
-      observedMap.delete(target);
-    };
+    if (dimensions.length) {
+      const measurements = dimensions.reduce((map, dimension) => {
+        map[dimension] = 0;
+        return map;
+      }, {});
+      observedMap.set(target, { onResize, measurements });
+      resizeObserver.observe(target);
+      return () => {
+        resizeObserver.unobserve(target);
+        observedMap.delete(target);
+      };
+    }
   }, [dimensions, ref, onResize]);
 }
