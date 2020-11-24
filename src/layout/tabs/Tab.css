@@ -1,19 +1,21 @@
 .Tab {
-  display: inline-block;
-  background-color: white;
-  color: grey;
-  border: none;
-  position: relative;
-  border-radius: 0;
-  border: none;
-  padding: 1px 9px;
-  display: flex;
   align-items: center;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  color: var(--grey400);
+  display: flex;
+  font-family: OpenSans-Regular;
+  font-weight: 500;
+  font-size: 12px;
+  height: 100%;
+  padding: 0 8px;
+  position: relative;
 }
 
 .Tab.selected {
-  color: black;
-  font-weight: bold;
+  color: var(--grey900);
+  font-family: OpenSans-SemiBold;
 }
 
 .Tab:focus {
@@ -45,6 +47,7 @@
 }
 
 .Tab .Tab-close .Icon {
+  border: none;
   transform: scale(0.75);
   transform-origin: center center;
 }

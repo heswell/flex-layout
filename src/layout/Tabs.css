@@ -3,3 +3,17 @@
   box-sizing: border-box;
   flex-direction: column;
 }
+
+.Tabs .Toolbar:before {
+  left: 0;
+  width: 100%;
+  bottom: 0;
+  height: 1px;
+  content: "";
+  position: absolute;
+  background: var(--grey60);
+}
+
+/* .Splitter.column + .Flexbox > .Tabs:first-child {
+  border-top: solid 1px lightgrey;
+} */

@@ -2,13 +2,17 @@ import React from "react";
 import useLayout from "./useLayout";
 import { Action } from "./layout-action";
 import { Tab, TabPanel, Tabstrip } from "./tabs";
+import { Toolbar, Tooltray } from "./toolbar";
 import { componentFromLayout, isTypeOf } from "./utils";
 import { registerComponent } from "./registry/ComponentRegistry";
+import { useId } from "./utils";
+import { CloseIcon, MaximizeIcon, MinimizeIcon } from "./icons";
 
 import "./Tabs.css";
 
 const Tabs = (props) => {
   const [layoutModel, dispatch] = useLayout("Flexbox", props);
+  const id = useId(props.id);
   const {
     keyBoardActivation = "automatic",
     onTabSelectionChanged,
@@ -16,7 +20,6 @@ const Tabs = (props) => {
   } = props;
 
   const handleTabSelection = (e, nextIdx) => {
-    console.log(`handleTabSelection newSelectedIdx=${nextIdx}`);
     dispatch({ type: Action.SWITCH_TAB, path: layoutModel.path, nextIdx });
 
     if (onTabSelectionChanged) {
@@ -57,20 +60,39 @@ const Tabs = (props) => {
 
   const renderTabs = () =>
     layoutModel.children.map((child, idx) => (
-      <Tab key={idx} label={child.title} deletable={child.removable} />
+      <Tab
+        ariaControls={`${id}-${idx}-tab`}
+        key={idx}
+        id={`${id}-${idx}`}
+        label={child.title}
+        deletable={child.removable}
+      />
     ));
 
   return (
     <div className="Tabs" style={style}>
-      <Tabstrip
-        keyBoardActivation={keyBoardActivation}
-        onChange={handleTabSelection}
-        onDelete={handleTabDelete}
-        value={layoutModel.active}
+      <Toolbar height={36} maxRows={1}>
+        <Tabstrip
+          keyBoardActivation={keyBoardActivation}
+          onChange={handleTabSelection}
+          onDelete={handleTabDelete}
+          value={layoutModel.active}
+        >
+          {renderTabs()}
+        </Tabstrip>
+        <Tooltray align="right">
+          <MinimizeIcon />
+          <MaximizeIcon />
+          <CloseIcon />
+        </Tooltray>
+      </Toolbar>
+      <TabPanel
+        id={`${id}-${layoutModel.active}-tab`}
+        ariaLabelledBy={`${id}-${layoutModel.active}`}
+        rootId={id}
       >
-        {renderTabs()}
-      </Tabstrip>
-      <TabPanel>{renderContent()}</TabPanel>
+        {renderContent()}
+      </TabPanel>
     </div>
   );
 };

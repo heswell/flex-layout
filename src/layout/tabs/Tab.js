@@ -16,8 +16,10 @@ const CloseButton = ({ onClick }) => {
 const Tab = forwardRef(
   (
     {
+      ariaControls,
       deletable,
       selected,
+      id,
       index,
       label,
       onClick,
@@ -62,11 +64,14 @@ const Tab = forwardRef(
 
     return (
       <button
+        aria-controls={ariaControls}
+        aria-selected={selected}
         className={cx("Tab", { selected })}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
         ref={setRef}
+        id={id}
         role="tab"
         tabIndex={selected ? undefined : -1}
       >

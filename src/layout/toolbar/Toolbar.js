@@ -36,6 +36,10 @@ const OverflowContainer = ({ tools }) => {
   );
 };
 
+export const Tooltray = ({ align = "left", children }) => {
+  return <span className={cx("ToolTray", align)}>{children}</span>;
+};
+
 const Toolbar = ({
   maxRows = 2,
   children,
@@ -69,18 +73,10 @@ const Toolbar = ({
             </span>
           );
         } else if (React.isValidElement(tool)) {
-          return (
-            <span className="Tool" key={index}>
-              {tool}
-            </span>
-          );
+          return tool;
         } else {
           const Icon = icon[`${capitalize(tool)}Icon`];
-          return (
-            <span className="Tool" key={index}>
-              <Icon />
-            </span>
-          );
+          return <Icon key={index} />;
         }
       }),
     [getTools, size]
@@ -125,7 +121,7 @@ const Toolbar = ({
     innerContainer,
     heightProp === "auto" ? EMPTY_ARRAY : ["height"],
     ({ height: measuredHeight }) => {
-      const rows = measuredHeight / 32;
+      const rows = measuredHeight / heightProp;
       if (measuredHeight !== height) {
         if (rows <= maxRows) {
           setHeight(measuredHeight);

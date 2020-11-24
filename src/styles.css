@@ -3,7 +3,15 @@ body {
   margin: 0;
 }
 
-.App {
-  font-family: sans-serif;
+:root {
+  --grey60: #c5c9d0;
+  --grey400: #44484f;
+  --grey900: #161616;
+
+  --orange700: #d65513;
+}
+
+.root {
+  font-family: OpenSans-Regular;
   text-align: center;
 }

@@ -34,7 +34,7 @@ export default function useTabstrip(
       const rootRect = ref.current.getBoundingClientRect();
       const left = tabRect.left - rootRect.left;
       const top = tabRect.bottom - rootRect.top;
-      setIndicatorPos({ style: { left, top, width: tabRect.width } });
+      setIndicatorPos({ style: { left, width: tabRect.width } });
     }
   }, [activeIndicator, ref, setIndicatorPos, tabs, value]);
 

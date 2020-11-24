@@ -1,4 +1,6 @@
 export { default as CloseIcon } from "./Close";
+export { default as MaximizeIcon } from "./Maximize";
+export { default as MinimizeIcon } from "./Minimize";
 export { default as MoreVerticalIcon } from "./MoreVertical";
 export { default as PaddingBottomIcon } from "./PaddingBottom";
 export { default as PaddingLeftIcon } from "./PaddingLeft";

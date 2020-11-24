@@ -1,8 +1,10 @@
 .Toolbar {
-  height: 32px;
+  align-items: flex-start;
   box-sizing: border-box;
   display: flex;
-  align-items: flex-start;
+  height: 32px;
+  overflow: hidden;
+  position: relative;
 }
 
 .Toolbar.sm {
@@ -41,18 +43,42 @@
   background-color: lightgrey;
 }
 
-.Toolbar .Tool {
+/* .Toolbar .Tool {
   border: solid 1px lightgrey;
   box-sizing: border-box;
   display: inline-flex;
-  height: 20px;
   align-items: center;
   justify-content: center;
   margin: 6px 3px;
+} */
+
+.Toolbar-inner .Icon {
+  border: solid 1px lightgrey;
+  box-sizing: border-box;
+  height: 22px;
+  padding: 1px;
+  width: 22px;
 }
 
-.Toolbar .ToolTray {
-  background-color: lightgrey;
+.Toolbar-inner > .Icon {
+  margin: 5px 3px;
+}
+
+.Toolbar > * {
+  display: inline-block;
+}
+
+.Toolbar .ToolTray .Icon {
+  margin: 5px 0;
+  padding: 1px 3px;
+  width: 26px;
+}
+.Toolbar .ToolTray .Icon:not(:first-child) {
+  border-left: none;
+}
+
+.Toolbar .ToolTray.right {
+  margin-left: auto;
 }
 
 .OverflowContainer {

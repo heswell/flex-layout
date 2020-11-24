@@ -12,7 +12,7 @@ export default function App() {
   const [layout, setLayout] = useState();
 
   const handleLayoutChange = (layout) => {
-    // console.log(JSON.stringify(layout, null, 2));
+    console.log(JSON.stringify(layout, null, 2));
     // history.current.push(layout);
   };
 
@@ -115,7 +115,7 @@ export default function App() {
                   ]}
                 />
                 <Component
-                  style={{ backgroundColor: "palegoldenrod", height: "100%" }}
+                  style={{ backgroundColor: "palegoldenrod", flex: 1 }}
                 />
               </View>
               <Flexbox resizeable column style={{ flex: 1 }}>
@@ -134,9 +134,7 @@ export default function App() {
                       "close"
                     ]}
                   />
-                  <Component
-                    style={{ backgroundColor: "purple", height: "100%" }}
-                  />
+                  <Component style={{ backgroundColor: "purple", flex: 1 }} />
                 </View>
                 <Component
                   resizeable
@@ -144,18 +142,14 @@ export default function App() {
                 />
               </Flexbox>
             </Flexbox>
-            <Flexbox style={{ flex: 1 }}>
+            <Flexbox resizeable style={{ flex: 1 }}>
               <Tabs resizeable style={{ flex: 1 }}>
                 <Component
                   removable
-                  style={{ backgroundColor: "pink" }}
-                  title="Little Pinky"
+                  style={{ backgroundColor: "white" }}
+                  title="Snow White"
                 />
-                <View
-                  header={{ title: "Yellow Fever 2" }}
-                  title="Yellow Fever"
-                  removable
-                >
+                <View title="Yellow Fever" removable>
                   <Toolbar>
                     <input type="text" className="tool-text" value="text 1" />
                     <input type="text" className="tool-text" value="text 2" />
@@ -187,6 +181,7 @@ export default function App() {
       <button onClick={() => load("layout3")}>Test3</button>
       <button onClick={() => load("layout4")}>Test4</button>
       <button onClick={() => load("layout5")}>Test5</button>
+      <button onClick={() => load("layout6")}>Test6</button>
     </>
   );
 }
