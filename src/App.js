@@ -30,7 +30,7 @@ export default function App() {
       <Flexbox
         column
         layoutModel={layout}
-        style={{ height: 1000, width: 1200 }}
+        style={{ height: 1000, width: 1200, flexDirection: "column" }}
         onLayoutChange={handleLayoutChange}
       >
         <Flexbox style={{ flex: 1 }}>
@@ -172,7 +172,7 @@ export default function App() {
             </Flexbox>
           </Flexbox>
         </Flexbox>
-        <Component style={{ backgroundColor: "green", height: 32 }} />
+        <Component style={{ backgroundColor: "grey", height: 32 }} />
       </Flexbox>
       <br />
       <button onClick={back}>Back</button>

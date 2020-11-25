@@ -104,10 +104,6 @@ const Flexbox = function Flexbox(props) {
     return list;
   };
 
-  if (!layoutModel.children) {
-    debugger;
-  }
-
   return (
     <div className="Flexbox" style={style} ref={rootRef}>
       {layoutModel.children.reduce(injectSplitters, [])}
