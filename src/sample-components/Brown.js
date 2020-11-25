@@ -1,8 +1,10 @@
 import React from "react";
-import Component from "../layout/Component";
+import { Component, registerComponent } from "../layout";
 
 const Brown = ({ style }) => {
   return <Component style={{ ...style, backgroundColor: "brown" }} />;
 };
 
 export default Brown;
+
+registerComponent("Brown", Brown);

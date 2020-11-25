@@ -9,7 +9,7 @@ export function typeOf(element) {
       type =
         element.type.displayName ||
         element.type.name ||
-        (element.type.type && element.type.type.name);
+        element.type?.type.name;
     } else if (typeof element.type === "string") {
       type = element.type;
     } else if (element.constructor) {

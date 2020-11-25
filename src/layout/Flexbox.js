@@ -22,8 +22,8 @@ const useSizesRef = () => {
 };
 
 const Flexbox = function Flexbox(props) {
-  const [layoutModel, dispatch] = useLayout("Flexbox", props);
   const { children, style } = props;
+  const [layoutModel, dispatch] = useLayout("Flexbox", props);
   const [sizesRef, setSizes, clearSizes] = useSizesRef([]);
   const isColumn = layoutModel.style.flexDirection === "column";
   const dimension = isColumn ? "height" : "width";
@@ -71,7 +71,6 @@ const Flexbox = function Flexbox(props) {
   );
 
   const injectSplitters = (list, layoutChild, i, arr) => {
-    // maybe we should make some kind of identity check across layoutModel ? id ?
     const child = isTypeOf(children[i], layoutChild.type)
       ? children[i]
       : componentFromLayout(layoutChild);

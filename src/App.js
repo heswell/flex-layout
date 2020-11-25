@@ -3,7 +3,14 @@ import { Brown, Red } from "./sample-components";
 import * as sample from "./layout/examples";
 import { CloseIcon } from "./layout/icons";
 
-import { Component, Flexbox, Tabs, Toolbar, View } from "./layout";
+import {
+  Component,
+  DraggableLayout,
+  Flexbox,
+  Tabs,
+  Toolbar,
+  View
+} from "./layout";
 
 import "./styles.css";
 
@@ -12,7 +19,7 @@ export default function App() {
   const [layout, setLayout] = useState();
 
   const handleLayoutChange = (layout) => {
-    console.log(JSON.stringify(layout, null, 2));
+    // console.log(JSON.stringify(layout, null, 2));
     // history.current.push(layout);
   };
 
@@ -27,106 +34,87 @@ export default function App() {
 
   return (
     <>
-      <Flexbox
-        column
-        layoutModel={layout}
-        style={{ height: 1000, width: 1200, flexDirection: "column" }}
-        onLayoutChange={handleLayoutChange}
-      >
-        <Flexbox style={{ flex: 1 }}>
-          <View resizeable style={{ minWidth: 50, width: 200 }}>
-            <Red style={{ height: "100%" }} />
-          </View>
-          <Flexbox resizeable column style={{ flex: 1 }}>
-            <Flexbox resizeable style={{ flex: 1 }}>
-              <View
-                header={{ closeButton: true, title: "A Study in Brown" }}
-                resizeable
-                style={{ minWidth: 50, width: 150 }}
-              >
-                <Brown style={{ height: "100%" }} />
-              </View>
-              <View resizeable style={{ flex: 1 }}>
-                <Toolbar
-                  id="cornflowerblue"
-                  stops={{ sm: 75, lg: 300 }}
-                  getTools={(size) => {
-                    switch (size) {
-                      case "sm":
-                        return [
-                          [
-                            "PaddingTop",
-                            "PaddingRight",
-                            "PaddingBottom",
-                            "PaddingLeft"
-                          ],
-                          "close",
-                          "close",
-                          "close",
-                          "close",
-                          "close",
-                          "close",
-                          "close",
-                          "close"
-                        ];
-                      default:
-                        return [
-                          "close",
-                          "close",
-                          "close",
-                          [
-                            "PaddingTop",
-                            "PaddingRight",
-                            "PaddingBottom",
-                            "PaddingLeft"
-                          ],
-                          "close",
-                          "close",
-                          "close",
-                          "close",
-                          "close"
-                        ];
-                    }
-                  }}
-                />
-                <Component
-                  style={{ backgroundColor: "cornflowerblue", flex: 1 }}
-                />
-              </View>
-
-              <View resizeable style={{ flex: 1 }}>
-                <Toolbar
-                  id="palegoldenrod"
-                  tools={[
-                    "close",
-                    "close",
-                    "close",
-                    [
-                      "PaddingTop",
-                      "PaddingRight",
-                      "PaddingBottom",
-                      "PaddingLeft"
-                    ],
-                    "close",
-                    "close",
-                    "close",
-                    "close",
-                    "close"
-                  ]}
-                />
-                <Component
-                  style={{ backgroundColor: "palegoldenrod", flex: 1 }}
-                />
-              </View>
-              <Flexbox resizeable column style={{ flex: 1 }}>
+      <DraggableLayout>
+        <Flexbox
+          column
+          layoutModel={layout}
+          style={{ height: 1000, width: 1200, flexDirection: "column" }}
+          onLayoutChange={handleLayoutChange}
+        >
+          <Flexbox style={{ flex: 1 }}>
+            <View resizeable style={{ minWidth: 50, width: 200 }}>
+              <Red style={{ height: "100%" }} />
+            </View>
+            <Flexbox resizeable column style={{ flex: 1 }}>
+              <Flexbox resizeable style={{ flex: 1 }}>
+                <View
+                  header={{ closeButton: true, title: "A Study in Brown" }}
+                  resizeable
+                  style={{ minWidth: 50, width: 150 }}
+                >
+                  <Brown style={{ height: "100%" }} />
+                </View>
                 <View resizeable style={{ flex: 1 }}>
                   <Toolbar
+                    id="cornflowerblue"
+                    stops={{ sm: 75, lg: 300 }}
+                    getTools={(size) => {
+                      switch (size) {
+                        case "sm":
+                          return [
+                            [
+                              "PaddingTop",
+                              "PaddingRight",
+                              "PaddingBottom",
+                              "PaddingLeft"
+                            ],
+                            "close",
+                            "close",
+                            "close",
+                            "close",
+                            "close",
+                            "close",
+                            "close",
+                            "close"
+                          ];
+                        default:
+                          return [
+                            "close",
+                            "close",
+                            "close",
+                            [
+                              "PaddingTop",
+                              "PaddingRight",
+                              "PaddingBottom",
+                              "PaddingLeft"
+                            ],
+                            "close",
+                            "close",
+                            "close",
+                            "close",
+                            "close"
+                          ];
+                      }
+                    }}
+                  />
+                  <Component
+                    style={{ backgroundColor: "cornflowerblue", flex: 1 }}
+                  />
+                </View>
+
+                <View resizeable style={{ flex: 1 }}>
+                  <Toolbar
+                    id="palegoldenrod"
                     tools={[
                       "close",
                       "close",
                       "close",
-                      "close",
-                      "close",
+                      [
+                        "PaddingTop",
+                        "PaddingRight",
+                        "PaddingBottom",
+                        "PaddingLeft"
+                      ],
                       "close",
                       "close",
                       "close",
@@ -134,46 +122,67 @@ export default function App() {
                       "close"
                     ]}
                   />
-                  <Component style={{ backgroundColor: "purple", flex: 1 }} />
+                  <Component
+                    style={{ backgroundColor: "palegoldenrod", flex: 1 }}
+                  />
                 </View>
+                <Flexbox resizeable column style={{ flex: 1 }}>
+                  <View resizeable style={{ flex: 1 }}>
+                    <Toolbar
+                      tools={[
+                        "close",
+                        "close",
+                        "close",
+                        "close",
+                        "close",
+                        "close",
+                        "close",
+                        "close",
+                        "close",
+                        "close"
+                      ]}
+                    />
+                    <Component style={{ backgroundColor: "purple", flex: 1 }} />
+                  </View>
+                  <Component
+                    resizeable
+                    style={{ backgroundColor: "lightgrey", flex: 1 }}
+                  />
+                </Flexbox>
+              </Flexbox>
+              <Flexbox resizeable style={{ flex: 1 }}>
+                <Tabs resizeable style={{ flex: 1 }}>
+                  <Component
+                    removable
+                    style={{ backgroundColor: "white" }}
+                    title="Snow White"
+                  />
+                  <View title="Yellow Fever" removable>
+                    <Toolbar>
+                      <input type="text" className="tool-text" value="text 1" />
+                      <input type="text" className="tool-text" value="text 2" />
+                      <input type="text" className="tool-text" value="text 3" />
+                      <input type="text" className="tool-text" value="text 4" />
+                      <CloseIcon />
+                    </Toolbar>
+                    <Component style={{ backgroundColor: "yellow", flex: 1 }} />
+                  </View>
+                  <Component
+                    removable
+                    style={{ backgroundColor: "blue" }}
+                    title="Blue Monday"
+                  />
+                </Tabs>
                 <Component
                   resizeable
-                  style={{ backgroundColor: "lightgrey", flex: 1 }}
+                  style={{ backgroundColor: "green", width: 50 }}
                 />
               </Flexbox>
             </Flexbox>
-            <Flexbox resizeable style={{ flex: 1 }}>
-              <Tabs resizeable style={{ flex: 1 }}>
-                <Component
-                  removable
-                  style={{ backgroundColor: "white" }}
-                  title="Snow White"
-                />
-                <View title="Yellow Fever" removable>
-                  <Toolbar>
-                    <input type="text" className="tool-text" value="text 1" />
-                    <input type="text" className="tool-text" value="text 2" />
-                    <input type="text" className="tool-text" value="text 3" />
-                    <input type="text" className="tool-text" value="text 4" />
-                    <CloseIcon />
-                  </Toolbar>
-                  <Component style={{ backgroundColor: "yellow", flex: 1 }} />
-                </View>
-                <Component
-                  removable
-                  style={{ backgroundColor: "blue" }}
-                  title="Blue Monday"
-                />
-              </Tabs>
-              <Component
-                resizeable
-                style={{ backgroundColor: "green", width: 50 }}
-              />
-            </Flexbox>
           </Flexbox>
+          <Component style={{ backgroundColor: "grey", height: 32 }} />
         </Flexbox>
-        <Component style={{ backgroundColor: "grey", height: 32 }} />
-      </Flexbox>
+      </DraggableLayout>
       <br />
       <button onClick={back}>Back</button>
       <button onClick={() => load("layout1")}>Test1</button>

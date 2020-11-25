@@ -19,6 +19,7 @@ const MISSING_TYPE_HANDLER = (state) => {
 };
 
 const handlers = {
+  [Action.DRAG_START]: dragStart,
   [Action.SPLITTER_RESIZE]: splitterResize,
   [Action.REMOVE]: removeChild,
   [Action.SWITCH_TAB]: switchTab,
@@ -108,8 +109,20 @@ function swapChild(model, child, replacement) {
   return { ...model, children };
 }
 
-function removeChild(model, action) {
-  return _removeChild(model, action.layoutModel);
+function dragStart(state, { dragRect, dragPos, instructions, ...action }) {
+  const newState = {
+    ...state,
+    drag: { dragRect, dragPos, component: action.layoutModel }
+  };
+  if (instructions && instructions.DoNotRemove) {
+    return newState;
+  } else {
+    return removeChild(newState, action);
+  }
+}
+
+function removeChild(model, { layoutModel }) {
+  return _removeChild(model, layoutModel);
 }
 
 function _removeChild(model, child) {
