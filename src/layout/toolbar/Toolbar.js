@@ -12,6 +12,7 @@ import { findFirstOverflow } from "./overflowUtils";
 
 import * as icon from "../icons";
 import useResizeObserver from "../responsive/useResizeObserver";
+import { useViewAction } from "../ViewContext";
 import { MoreVerticalIcon } from "../icons";
 import { registerComponent } from "../registry/ComponentRegistry";
 
@@ -44,9 +45,11 @@ const Toolbar = ({
   maxRows = 2,
   children,
   className,
+  draggable,
   height: heightProp = 32,
   id,
   sizes,
+  style,
   tools,
   stops,
   getTools = () => tools || React.Children.toArray(children)
@@ -58,6 +61,7 @@ const Toolbar = ({
   const [size, setSize] = useState("lg");
   const [overflowing, setOverflowing] = useState(false);
   const [showOverflow, setShowOverflow] = useState(false);
+  const dispatchViewAction = useViewAction();
 
   const handleOverflowClick = () => {
     setShowOverflow((show) => !show);
@@ -73,7 +77,15 @@ const Toolbar = ({
             </span>
           );
         } else if (React.isValidElement(tool)) {
-          return tool;
+          if (tool.props.action) {
+            return React.cloneElement(tool, {
+              onClick: () => {
+                dispatchViewAction(tool.props.action);
+              }
+            });
+          } else {
+            return tool;
+          }
         } else {
           const Icon = icon[`${capitalize(tool)}Icon`];
           return <Icon key={index} />;
@@ -137,6 +149,13 @@ const Toolbar = ({
     }
   );
 
+  // useDraggable
+  const handleMouseDown = (e) => {
+    if (draggable) {
+      dispatchViewAction({ type: "mousedown" }, e);
+    }
+  };
+
   return (
     <ResponsiveContainer
       id={id}
@@ -145,8 +164,9 @@ const Toolbar = ({
         "overflow-open": showOverflow
       })}
       ref={root}
+      onMouseDown={handleMouseDown}
       onResize={setSize}
-      style={{ height }}
+      style={{ ...style, height }}
     >
       <div className="Toolbar-inner" ref={innerContainer}>
         {renderTools()}

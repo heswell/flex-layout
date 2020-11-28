@@ -1,6 +1,6 @@
-// import DropTargetRenderer from "../components/drop-target/drop-target-renderer";
+import DropTargetRenderer from "./DropTargetRenderer";
 import DragState from "./DragState";
-import { followPath } from "../utils";
+import { followPath, typeOf } from "../utils";
 import { BoxModel, Position } from "./BoxModel";
 import { DropTarget, identifyDropTarget } from "./DropTarget";
 
@@ -15,7 +15,7 @@ let _simpleDrag;
 let _dragThreshold;
 
 const DEFAULT_DRAG_THRESHOLD = 5;
-// const _dropTargetRenderer = new DropTargetRenderer();
+const _dropTargetRenderer = new DropTargetRenderer();
 const _dragContainers = [];
 const SCALE_FACTOR = 0.4;
 
@@ -25,7 +25,6 @@ export class DragContainer {
   }
 
   static register(path) {
-    console.log(`DragContainer register path ${path}`);
     // need to decide how to store these
     _dragContainers.push(path);
   }
@@ -33,21 +32,21 @@ export class DragContainer {
   static unregister(/*path*/) {}
 }
 
-function getDragContainer(layoutModel, path) {
+function getDragContainer(rootContainer, dragContainerPath) {
   var pathToContainer = "";
   var maxSteps = 0;
 
   //TODO still to be determined how this will work
-  if (layoutModel.$path === path) {
-    return layoutModel;
-  } else if (!path) {
+  if (rootContainer.path === dragContainerPath) {
+    return rootContainer;
+  } else if (!dragContainerPath) {
     // If the model has no path (i.e. it hasn't been dragged out of the existing layout)
     // hiow do we decide the dragContainer to use (assuming there may be more than 1)
     pathToContainer = _dragContainers[0];
   } else {
     // find the longest container path that matches path (ie the smallest enclosing container);
     for (var i = 0; i < _dragContainers.length; i++) {
-      if (path.indexOf(_dragContainers[i]) === 0) {
+      if (dragContainerPath.indexOf(_dragContainers[i]) === 0) {
         var steps = _dragContainers[i].split(".").length;
         if (steps > maxSteps) {
           maxSteps = steps;
@@ -57,7 +56,7 @@ function getDragContainer(layoutModel, path) {
     }
   }
 
-  return followPath(layoutModel, pathToContainer);
+  return followPath(rootContainer, pathToContainer);
 }
 
 export const Draggable = {
@@ -85,15 +84,19 @@ export const Draggable = {
 
   // called from handleDragStart (_dragCallback)
   initDrag(
-    layoutModel,
-    path,
+    rootContainer,
+    dragContainerPath,
     { top, left, right, bottom },
     dragPos,
     dragHandler
   ) {
     _dragCallback = dragHandler;
-
-    return initDrag(layoutModel, path, { top, left, right, bottom }, dragPos);
+    return initDrag(
+      rootContainer,
+      dragContainerPath,
+      { top, left, right, bottom },
+      dragPos
+    );
   }
 };
 
@@ -119,17 +122,20 @@ function preDragMouseupHandler() {
   window.removeEventListener("mouseup", preDragMouseupHandler, false);
 }
 
-function initDrag(layoutModel, path, dragRect, dragPos) {
-  _dragContainer = getDragContainer(layoutModel, path);
+function initDrag(rootContainer, dragContainerPath, dragRect, dragPos) {
+  _dragContainer = getDragContainer(rootContainer, dragContainerPath);
   var start = window.performance.now();
 
   // translate the layout $position to drag-oriented co-ordinates, ignoring splitters
-  _measurements = BoxModel.measure(layoutModel);
+  _measurements = BoxModel.measure(rootContainer);
+  console.log(_measurements);
   var end = window.performance.now();
+  console.log(`[Draggable] measurements took ${end - start}ms`, _measurements);
 
-  var { type, $path } = _dragContainer;
+  const type = typeOf(_dragContainer);
+  var { path } = _dragContainer.props;
 
-  var dragZone = _measurements[$path];
+  var dragZone = _measurements[path];
 
   _dragState = new DragState(dragZone, dragPos.x, dragPos.y, dragRect);
 
@@ -147,7 +153,7 @@ function initDrag(layoutModel, path, dragRect, dragPos) {
   } else {
     _simpleDrag = false;
 
-    // _dropTargetRenderer.prepare(dragZone);
+    _dropTargetRenderer.prepare(dragZone);
 
     return {
       // scale factor should be applied in caller, not here
@@ -203,7 +209,7 @@ function dragMousemoveHandler(evt) {
   }
 
   if (dropTarget) {
-    // _dropTargetRenderer.draw(dropTarget, x, y);
+    _dropTargetRenderer.draw(dropTarget, x, y);
     _dropTarget = dropTarget;
   }
 }
@@ -216,7 +222,7 @@ function onDragEnd() {
   if (_dropTarget) {
     // why wouldn't the active dropTarget be the hover target - IT ISNT
     const dropTarget =
-      // _dropTargetRenderer.hoverDropTarget ||
+      _dropTargetRenderer.hoverDropTarget ||
       DropTarget.getActiveDropTarget(_dropTarget);
 
     // looking into eliminating this call altogether. We don't need it if we set the dragging index via
@@ -234,7 +240,7 @@ function onDragEnd() {
 
   _dragCallback = null;
   _dragContainer = null;
-  // _dropTargetRenderer.clear();
+  _dropTargetRenderer.clear();
 
   window.removeEventListener("mousemove", dragMousemoveHandler, false);
   window.removeEventListener("mouseup", dragMouseupHandler, false);

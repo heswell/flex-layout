@@ -1,3 +1,7 @@
+import React from "react";
+import { typeOf } from "../utils";
+import { isContainer } from "../registry/ComponentRegistry";
+
 export var positionValues = {
   north: 1,
   east: 2,
@@ -57,7 +61,7 @@ export class BoxModel {
   //TODO we should accept initial let,top offsets here
   static measure(model) {
     var measurements = {};
-    addMeasurements(model, measurements, 0, 0, 0, 0, 0, 0);
+    addMeasurements(model, measurements, 0, 0, 0, 0);
     return measurements;
   }
 
@@ -157,194 +161,164 @@ export function pointPositionWithinRect(x, y, rect) {
   return { position, x, y, pctX, pctY, closeToTheEdge, tab };
 }
 
-function addMeasurements(model, measurements, x, y, preX, posX, preY, posY) {
-  if (model && model.$path) {
-    //onsole.log(`\naddMeasurements			x:${x}	y:${y}	preX:${preX}	posX:${posX}	preY:${preY}	posY:${posY}   ${model.type} ${model.type === 'FlexBox' ? model.style.flexDirection :''} ${model.$path}`);
-
-    const componentMeasurements = addClientMeasurements(
-      model,
-      measurements,
-      x,
-      y,
-      preX,
-      posX,
-      preY,
-      posY
-    );
-
-    if (model.children) {
-      collectChildMeasurements(
+function addMeasurements(model, measurements, preX, posX, preY, posY) {
+  if (React.isValidElement(model)) {
+    if (model.props.id && model.props.path) {
+      const componentMeasurements = addClientMeasurements(
         model,
         measurements,
-        model.computedStyle.left + x,
-        model.computedStyle.top + y,
         preX,
         posX,
         preY,
         posY
       );
-    }
 
-    return componentMeasurements;
+      const type = typeOf(model);
+      if (type !== "Tabs" && isContainer(type)) {
+        collectChildMeasurements(model, measurements, preX, posX, preY, posY);
+      }
+
+      return componentMeasurements;
+    }
   }
 }
 
-function addClientMeasurements(
-  model,
-  measurements,
-  x,
-  y,
-  preX,
-  posX,
-  preY,
-  posY
-) {
-  const { $id, $path, header } = model;
-  let { top, left, width, height } = model.computedStyle;
+function addClientMeasurements(model, measurements, preX, posX, preY, posY) {
+  const { id, path /*, header */ } = model.props;
+  const el = document.getElementById(id);
+  if (!el) {
+    console.log(`No DOM for ${typeOf(model)}`);
+  }
+  let { top, left, width, height } = el.getBoundingClientRect();
 
-  left = x + left - preX;
-  top = y + top - preY;
+  left = left - preX;
+  top = top - preY;
 
   const right = preX + left + width + posX;
 
-  measurements[$path] = {
+  measurements[path] = {
     top,
     left,
     right,
     bottom: preY + top + height + posY
   };
 
-  if (header || model.type === "TabbedContainer") {
-    //TODO don't assume headerheight = 34
-    measurements[$path].header = { top, left, right, bottom: top + 34 };
+  // if (header || model.type === "TabbedContainer") {
+  //   //TODO don't assume headerheight = 34
+  //   measurements[$path].header = { top, left, right, bottom: top + 34 };
 
-    if (model.type === "TabbedContainer") {
-      console.log(`measuring a tabbedContainer ${$path}`);
+  //   if (model.type === "TabbedContainer") {
+  //     console.log(`measuring a tabbedContainer ${$path}`);
 
-      const start = performance.now();
-      const tabMeasurements = measureTabs($id);
-      const end = performance.now();
-      console.log(`took ${end - start}ms to measure tabs`);
-      measurements[$path].tabs = tabMeasurements;
-    }
-  }
+  //     const start = performance.now();
+  //     const tabMeasurements = measureTabs($id);
+  //     const end = performance.now();
+  //     console.log(`took ${end - start}ms to measure tabs`);
+  //     measurements[$path].tabs = tabMeasurements;
+  //   }
+  // }
 
-  return measurements[$path];
+  return measurements[path];
 }
 
-function isSplitter(model) {
-  return model && model.type === "Splitter";
-}
-
-function collectChildMeasurements(
-  model,
-  measurements,
-  x,
-  y,
-  preX,
-  posX,
-  preY,
-  posY
-) {
+function collectChildMeasurements(model, measurements, preX, posX, preY, posY) {
   //onsole.log(`   collectChildMeasurements	x:${x}	y:${y}	preX:${preX}	posX:${posX}	preY:${preY}	posY:${posY}`);
 
-  var components = model.children
-    .reduce((arr, child, idx, all) => {
-      // generate a 'local' splitter adjustment for children adjacent to splitters
-      var localPreX = 0;
-      var localPosX = 0;
-      var localPreY = 0;
-      var localPosY = 0;
+  const components = model.props.children.map((child, i, all) => {
+    // generate a 'local' splitter adjustment for children adjacent to splitters
+    let localPreX = 0;
+    let localPosX = 0;
+    let localPreY = 0;
+    let localPosY = 0;
 
-      if (child.type !== "Splitter" && child.type !== "layout") {
-        if (model.type === "FlexBox") {
-          var prev = all[idx - 1];
-          var next = all[idx + 1];
-          var n = all.length - 1;
+    return addMeasurements(
+      child,
+      measurements,
+      localPreX,
+      localPosX,
+      localPreY,
+      localPosY
+    );
+  });
 
-          if (model.style.flexDirection === "column") {
-            localPreX = preX;
-            localPosX = posX;
-            localPreY =
-              idx === 0
-                ? preY
-                : isSplitter(prev)
-                ? prev.computedStyle.height / 2
-                : 0;
-            localPosY =
-              idx === n
-                ? posY
-                : isSplitter(next)
-                ? next.computedStyle.height / 2
-                : 0;
-          } else {
-            localPreX =
-              idx === 0
-                ? preX
-                : isSplitter(prev)
-                ? prev.computedStyle.width / 2
-                : 0;
-            localPosX =
-              idx === n
-                ? posX
-                : isSplitter(next)
-                ? next.computedStyle.width / 2
-                : 0;
-            localPreY = preY;
-            localPosY = posY;
-          }
-        } else {
-          localPreX = preX;
-          localPosX = posX;
-          localPreY = preY;
-          localPosY = posY;
-        }
+  // var components = model.props.children
+  //   .reduce((arr, child, idx, all) => {
+  //     if (child.type !== "Splitter" && child.type !== "layout") {
+  //       if (model.type === "FlexBox") {
+  //         var prev = all[idx - 1];
+  //         var next = all[idx + 1];
+  //         var n = all.length - 1;
 
-        arr.push(
-          addMeasurements(
-            child,
-            measurements,
-            x,
-            y,
-            localPreX,
-            localPosX,
-            localPreY,
-            localPosY
-          )
-        );
-      }
+  //         if (model.style.flexDirection === "column") {
+  //           localPreX = preX;
+  //           localPosX = posX;
+  //           localPreY =
+  //             idx === 0
+  //               ? preY
+  //               : isSplitter(prev)
+  //               ? prev.computedStyle.height / 2
+  //               : 0;
+  //           localPosY =
+  //             idx === n
+  //               ? posY
+  //               : isSplitter(next)
+  //               ? next.computedStyle.height / 2
+  //               : 0;
+  //         } else {
+  //           localPreX =
+  //             idx === 0
+  //               ? preX
+  //               : isSplitter(prev)
+  //               ? prev.computedStyle.width / 2
+  //               : 0;
+  //           localPosX =
+  //             idx === n
+  //               ? posX
+  //               : isSplitter(next)
+  //               ? next.computedStyle.width / 2
+  //               : 0;
+  //           localPreY = preY;
+  //           localPosY = posY;
+  //         }
+  //       } else {
+  //         localPreX = preX;
+  //         localPosX = posX;
+  //         localPreY = preY;
+  //         localPosY = posY;
+  //       }
 
-      return arr;
-    }, [])
-    .filter((c) => c); // the dragging component will return undefined, unrendered tabbed children
+  //     return arr;
+  //   }, [])
+  //   .filter((c) => c); // the dragging component will return undefined, unrendered tabbed children
   // .sort(byPosition);
 
   if (components.length) {
-    measurements[model.$path].children = components;
+    measurements[model.props.path].children = components;
   }
 }
 
-function smallestBoxContainingPoint(layout, measurements, x, y) {
-  //onsole.log('smallestBoxContainingPoint in ' + component.constructor.displayName);
+function smallestBoxContainingPoint(component, measurements, x, y) {
+  const type = typeOf(component);
 
-  var rect = measurements[layout.$path];
+  var rect = measurements[component.props.path];
   if (!containsPoint(rect, x, y)) return null;
 
-  if (!layout.children) {
-    return layout;
+  if (!isContainer(type)) {
+    return component;
   }
 
   if (rect.header && containsPoint(rect.header, x, y)) {
-    return layout;
+    return component;
   }
 
   var subLayout;
-  var children = layout.children;
+  var children = component.props.children;
 
   for (var i = 0; i < children.length; i++) {
-    if (layout.type === "TabbedContainer" && layout.active !== i) {
+    if (type === "Tabs" && component.props.active !== i) {
       continue;
     }
+    // eslint-disable-next-line no-cond-assign
     if (
       (subLayout = smallestBoxContainingPoint(children[i], measurements, x, y))
     ) {
@@ -352,7 +326,7 @@ function smallestBoxContainingPoint(layout, measurements, x, y) {
     }
   }
 
-  return layout;
+  return component;
 }
 
 function containsPoint(rect, x, y) {

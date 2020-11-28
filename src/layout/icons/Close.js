@@ -1,9 +1,12 @@
 import React, { useEffect, useRef } from "react";
+import { registerComponent } from "../registry/ComponentRegistry";
 
 import "./Icon.css";
 
 const neverRerender = () => true;
-const CloseIcon = () => {
+
+// onClick is temporary until we have a proper Toolbar Field
+const CloseIcon = ({ onClick }) => {
   const root = useRef(null);
   useEffect(() => {
     root.current.innerHTML = `
@@ -12,7 +15,9 @@ const CloseIcon = () => {
   </svg>`;
   }, []);
 
-  return <span className="Icon close" ref={root} />;
+  return <span className="Icon close" ref={root} onClick={onClick} />;
 };
 
 export default React.memo(CloseIcon, neverRerender);
+
+registerComponent("CloseIcon", CloseIcon);

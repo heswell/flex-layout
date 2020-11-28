@@ -1,36 +1,52 @@
+import React from "react";
+
+// TODO isn't this equivalent to containerOf ?
+export function followPathToParent(layout, path) {
+  if (path === "0") return null;
+  if (path === layout.props.path) return null;
+
+  return followPath(layout, path.replace(/.\d+$/, ""));
+}
+
 export function containerOf(layout, target) {
   if (target === layout) {
     return null;
   } else {
-    let { idx, finalStep } = nextStep(layout.$path, target.$path);
+    let { idx, finalStep } = nextStep(layout.props.path, target.props.path);
     if (finalStep) {
       return layout;
     } else if (
-      layout.children === undefined ||
-      layout.children[idx] === undefined
+      layout.props.children === undefined ||
+      layout.props.children[idx] === undefined
     ) {
       return null;
     } else {
-      return containerOf(layout.children[idx], target);
+      return containerOf(layout.props.children[idx], target);
     }
   }
 }
 
-export function followPath(model, path) {
-  if (path.indexOf(model.path) !== 0) {
+export function followPath(source, path) {
+  let isElement = React.isValidElement(source);
+  const sourcePath = isElement ? source.props.path : source.path;
+
+  if (path.indexOf(sourcePath) !== 0) {
     throw Error(
-      `pathUtils.followPath path ${path} is not within model.path ${model.path}`
+      `pathUtils.followPath path ${path} is not within model.path ${sourcePath}`
     );
   }
 
-  var route = path.slice(model.path.length + 1);
+  var route = path.slice(sourcePath.length + 1);
   if (route === "") {
-    return model;
+    return source;
   }
   var paths = route.split(".");
 
   for (var i = 0; i < paths.length; i++) {
-    if (model.children === undefined) {
+    if (
+      (isElement && React.Children.count(source.props.children) === 0) ||
+      (!isElement && source.children === undefined)
+    ) {
       console.log(
         `model at 0.${paths
           .slice(0, i)
@@ -43,9 +59,12 @@ export function followPath(model, path) {
       return;
     }
 
-    model = model.children[paths[i]];
+    source = isElement
+      ? source.props.children[paths[i]]
+      : source.children[paths[i]];
+    isElement = React.isValidElement(source);
 
-    if (model === undefined) {
+    if (source === undefined) {
       console.log(
         `model at 0.${paths
           .slice(0, i)
@@ -58,7 +77,7 @@ export function followPath(model, path) {
       return;
     }
   }
-  return model;
+  return source;
 }
 
 export function nextStep(pathSoFar, targetPath) {

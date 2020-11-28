@@ -7,7 +7,7 @@ const ResponsiveContainer = forwardRef(function ResponsiveContainer(
   props,
   ref
 ) {
-  const { children, className, style } = props;
+  const { children, className, onMouseDown, style } = props;
 
   const root = useRef(null);
   const minWidth = useBreakPoints(root, props);
@@ -15,6 +15,7 @@ const ResponsiveContainer = forwardRef(function ResponsiveContainer(
   return (
     <div
       className={cx(className, "responsive")}
+      onMouseDown={onMouseDown}
       ref={useForkRef(ref, root)}
       style={{ ...style, minWidth }}
     >

@@ -4,11 +4,11 @@ import {
   pointPositionWithinRect,
   Position
 } from "./BoxModel";
-import { containerOf } from "../utils";
+import { containerOf, typeOf } from "../utils";
 
 export const isTabstrip = (dropTarget) =>
   dropTarget.pos.tab &&
-  dropTarget.component.type === "Tabs" &&
+  typeOf(dropTarget.component) === "Tabs" &&
   dropTarget.pos.position.Header;
 
 export class DropTarget {
@@ -151,17 +151,16 @@ export function identifyDropTarget(x, y, model, measurements) {
   );
 
   if (component) {
-    if (component.type === "layout") {
-      debugger;
-    }
-
-    const clientRect = measurements[component.$path];
+    const clientRect = measurements[component.props.path];
     const pos = pointPositionWithinRect(x, y, clientRect);
 
-    // console.log(`%cidentifyDropTarget target path ${component.$path}
+    // console.log(
+    //   `%c[DropTarget] identifyDropTarget target path ${component.props.path}
     //     position: ${JSON.stringify(pos)}
-    //     measurements : ${JSON.stringify(measurements[component.$path])}
-    //     `,'color:cornflowerblue;font-weight:bold;');
+    //     measurements : ${JSON.stringify(measurements[component.props.path])}
+    //     `,
+    //   "color:cornflowerblue;font-weight:bold;"
+    // );
 
     const nextDropTarget = getNextDropTarget(
       model,
@@ -207,10 +206,14 @@ export function getNextDropTarget(layout, component, pos, measurements, x, y) {
         container &&
         positionedAtOuterContainerEdge(container, pos, component, measurements)
       ) {
-        const clientRect = measurements[container.$path];
+        const clientRect = measurements[container.props.path];
         let containerPos = pointPositionWithinRect(x, y, clientRect);
 
-        //onsole.log(`${component.type} positioned at outer edge of container ${container.type}`);
+        // console.log(
+        //   `${typeOf(component)} positioned at outer edge of container ${typeOf(
+        //     container
+        //   )}`
+        // );
         // if its a VBox and we're close to left or right ...
         if (
           (isVBox(container) || isTabbedContainer(container)) &&
@@ -252,8 +255,8 @@ function positionedAtOuterContainerEdge(
   component,
   measurements
 ) {
-  const containingBox = measurements[containingComponent.$path];
-  const box = measurements[component.$path];
+  const containingBox = measurements[containingComponent.props.path];
+  const box = measurements[component.props.path];
 
   const closeToTop = closeToTheEdge & positionValues.north;
   const closeToRight = closeToTheEdge & positionValues.east;
@@ -269,16 +272,22 @@ function positionedAtOuterContainerEdge(
   return false;
 }
 
-function isTabbedContainer({ type }) {
-  return type === "TabbedContainer";
+function isTabbedContainer(component) {
+  return typeOf(component) === "Tabs";
 }
 
-function isVBox({ type, style: { flexDirection } }) {
-  return type === "FlexBox" && flexDirection === "column";
+function isVBox(component) {
+  return (
+    typeOf(component) === "FlexBox" &&
+    component.props.style.flexDirection === "column"
+  );
 }
 
-function isHBox({ type, style: { flexDirection } }) {
-  return type === "FlexBox" && flexDirection === "row";
+function isHBox(component) {
+  return (
+    typeOf(component) === "FlexBox" &&
+    component.props.style.flexDirection === "row"
+  );
 }
 
 const w = "  ";

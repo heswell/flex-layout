@@ -2,8 +2,8 @@ const _containers = {};
 
 export const ComponentRegistry = {};
 
-export function isContainer(className) {
-  return _containers[className] === true;
+export function isContainer(componentType) {
+  return _containers[componentType] === true;
 }
 
 export const isRegistered = (className) => !!ComponentRegistry[className];
