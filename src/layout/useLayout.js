@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import layoutReducer from "./layout-reducer";
-import { getLayoutModel } from "./layoutModel"; // TODO allow props to specify layoutRoot
+import { applyLayout } from "./applyLayout"; // TODO allow props to specify layoutRoot
 import { Action } from "./layout-action";
 /**
  * Root layout node will never receive dispatch. It may receive a layoutModel,
@@ -9,35 +9,37 @@ import { Action } from "./layout-action";
  * layoutModel from props. Root node, if seeded with layoutModel stores this in
  * state and subsequently manages layoutModel in state.
  */
-const useLayout = (layoutType, props, isDraggableRoot) => {
+const useLayout = (layoutType, props, customDispatcher) => {
   const isRoot = props.dispatch === undefined;
-  const [state, setState] = useState(
-    isRoot ? props.layoutModel || getLayoutModel(layoutType, props) : undefined
-  );
-
-  useEffect(() => {
-    if (isRoot && props.layoutModel) {
-      setState(props.layoutModel);
-    }
-  }, [props.layoutModel, isRoot]);
+  const [, setState] = useState(0);
 
   const dispatchLayoutAction = useRef(
     props.dispatch ||
       ((action) => {
-        // Ignore a drag start event, if root is not configured as draggable
-        if (!(!isDraggableRoot && action.type === Action.DRAG_START)) {
-          const nextLayoutModel = layoutReducer(state, action);
-          if (nextLayoutModel !== state) {
-            setState(nextLayoutModel);
-            if (props.onLayoutChange) {
-              props.onLayoutChange(nextLayoutModel);
-            }
+        // A custom dispatcher should return true to indicate that it has handled this action
+        if (customDispatcher && customDispatcher(action)) {
+          return;
+        }
+        const nextState = layoutReducer(state.current, action);
+        if (nextState !== state) {
+          state.current = nextState;
+          setState((c) => c + 1);
+          if (props.onLayoutChange) {
+            // TODO serialize layout
+            props.onLayoutChange(nextState);
           }
         }
       })
   );
 
-  return [state || props.layoutModel, dispatchLayoutAction.current];
+  // Only the root layout has state here
+  const state = useRef(
+    isRoot
+      ? applyLayout(layoutType, props, dispatchLayoutAction.current)
+      : undefined
+  );
+
+  return [state.current || props, dispatchLayoutAction.current];
 };
 
 export default useLayout;

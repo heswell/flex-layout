@@ -1,28 +1,36 @@
 import React, { useRef } from "react";
 import Header from "./Header";
 import { isRegistered, registerComponent } from "./registry/ComponentRegistry";
+import ViewContext from "./ViewContext";
 import { typeOf } from "./utils";
 import useLayout from "./useLayout";
 import { Action } from "./layout-action";
 
 import "./View.css";
 
-const View = React.memo(function View(props) {
-  const [layoutModel, dispatch] = useLayout("Flexbox", props);
+const View = React.memo(function View(inputProps) {
+  const [props, dispatch] = useLayout("Flexbox", inputProps);
   const root = useRef(null);
-  const { children, style, header } = props;
+  const { children, id, header, path, style } = props;
   const headerProps = typeof header === "object" ? header : {};
   const handleClose = () => {
-    dispatch({ type: Action.REMOVE, layoutModel });
+    dispatch({ type: Action.REMOVE, path: props.path });
+  };
+
+  const dispatchAction = (action, evt) => {
+    if (action === "close") {
+      handleClose();
+    } else if (action.type === "mousedown") {
+      handleMouseDown(evt);
+    }
   };
 
   const handleMouseDown = (evt) => {
-    console.log("View:handleMouseDown");
     evt.stopPropagation();
     const dragRect = root.current.getBoundingClientRect();
     // when would we ever have this onMouseDown ?s
     if (props.onMouseDown) {
-      props.onMouseDown({ layoutModel });
+      props.onMouseDown({ path: props.path });
     } else {
       // We're expecting children to be a single element
       const componentType = typeOf(children);
@@ -30,20 +38,22 @@ const View = React.memo(function View(props) {
         registerComponent(componentType, children.type);
       }
       // TODO should we check if we are allowed to drag ?
-      dispatch({ type: Action.DRAG_START, evt, layoutModel, dragRect });
+      dispatch({ type: Action.DRAG_START, evt, path, dragRect });
     }
   };
 
   return (
-    <div className="View" style={style} ref={root}>
-      {header ? (
-        <Header
-          {...headerProps}
-          onClose={handleClose}
-          onMouseDown={handleMouseDown}
-        />
-      ) : null}
-      <div className="view-main">{children}</div>
+    <div className="View" id={id} ref={root} style={style}>
+      <ViewContext.Provider value={{ dispatch: dispatchAction }}>
+        {header ? (
+          <Header
+            {...headerProps}
+            onClose={handleClose}
+            onMouseDown={handleMouseDown}
+          />
+        ) : null}
+        <div className="view-main">{children}</div>
+      </ViewContext.Provider>
     </div>
   );
 });
@@ -51,4 +61,4 @@ View.displayName = "View";
 
 export default View;
 
-registerComponent("View", View, true);
+registerComponent("View", View);

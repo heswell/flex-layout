@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useState } from "react";
 import Splitter from "./Splitter";
 import useLayout from "./useLayout";
 import { Action } from "./layout-action";
-import { componentFromLayout, isTypeOf } from "./utils";
+// import { componentFromLayout, isTypeOf } from "./utils";
 import { registerComponent } from "./registry/ComponentRegistry";
 
 import "./Flexbox.css";
@@ -21,12 +21,11 @@ const useSizesRef = () => {
   return [sizesRef, setSizes, clear];
 };
 
-const Flexbox = function Flexbox(props) {
-  const { children, style } = props;
-  const [layoutModel, dispatch] = useLayout("Flexbox", props);
+const Flexbox = function Flexbox(inputProps) {
+  const [props, dispatch] = useLayout("Flexbox", inputProps);
+  const { children, column, id, path, style } = props;
   const [sizesRef, setSizes, clearSizes] = useSizesRef([]);
-  const isColumn = layoutModel.style.flexDirection === "column";
-  const dimension = isColumn ? "height" : "width";
+  const dimension = column ? "height" : "width";
   const rootRef = useRef(null);
 
   const handleDragStart = useCallback(() => {
@@ -54,14 +53,14 @@ const Flexbox = function Flexbox(props) {
     clearSizes();
     dispatch({
       type: Action.SPLITTER_RESIZE,
-      layoutModel,
+      path,
       sizes
     });
-  }, [dispatch, layoutModel, clearSizes, sizesRef]);
+  }, [clearSizes, dispatch, path, sizesRef]);
 
   const createSplitter = (i) => (
     <Splitter
-      column={isColumn}
+      column={column}
       index={i}
       key={`splitter-${i}`}
       onDrag={handleDrag}
@@ -70,42 +69,34 @@ const Flexbox = function Flexbox(props) {
     />
   );
 
-  const injectSplitters = (list, layoutChild, i, arr) => {
-    const child = isTypeOf(children[i], layoutChild.type)
-      ? children[i]
-      : componentFromLayout(layoutChild);
-
-    const { flexBasis, [dimension]: layoutSize } = layoutChild.style;
+  const injectSplitters = (list, child, i, arr) => {
+    const { flexBasis, [dimension]: layoutSize } = child.props.style;
     const draggedSize = sizesRef.current[i];
-    const preferLayout =
-      draggedSize === undefined ||
-      draggedSize === flexBasis ||
-      draggedSize === layoutSize;
+    const cloneChild =
+      draggedSize !== undefined &&
+      draggedSize !== flexBasis &&
+      draggedSize !== layoutSize;
 
-    const style = preferLayout
-      ? layoutChild.style
-      : {
-          ...layoutChild.style,
+    if (cloneChild) {
+      const dolly = React.cloneElement(child, {
+        style: {
+          ...child.props.style,
           flexBasis: draggedSize
-        };
-
-    const dolly = React.cloneElement(child, {
-      dispatch,
-      key: i,
-      layoutModel: layoutChild,
-      style
-    });
-    list.push(dolly);
+        }
+      });
+      list.push(dolly);
+    } else {
+      list.push(child);
+    }
     // TODO we have to watch out for runtime changes to resizeable
-    if (layoutChild.resizeable && arr[i + 1]?.resizeable) {
+    if (child.props.resizeable && arr[i + 1]?.props.resizeable) {
       list.push(createSplitter(i));
     }
     return list;
   };
-
   return (
-    <div className="Flexbox" style={style} ref={rootRef}>
-      {layoutModel.children.reduce(injectSplitters, [])}
+    <div className="Flexbox" id={id} ref={rootRef} style={style}>
+      {children.reduce(injectSplitters, [])}
     </div>
   );
 };

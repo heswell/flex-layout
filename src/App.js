@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Brown, Red } from "./sample-components";
 import * as sample from "./layout/examples";
-import { CloseIcon } from "./layout/icons";
+import { CloseIcon as CloseAction } from "./layout/icons";
 
 import {
   Component,
@@ -32,8 +32,79 @@ export default function App() {
     return setLayout(sample[layout]());
   };
 
+  const StandardToolbar = () => (
+    <Toolbar style={{ justifyContent: "flex-end" }} draggable>
+      <CloseAction action="close" />
+    </Toolbar>
+  );
+
   return (
     <>
+      <DraggableLayout>
+        <Flexbox column style={{ height: 1000, width: 1200 }}>
+          <Flexbox style={{ flex: 1 }}>
+            <View resizeable style={{ minWidth: 50, width: 200 }}>
+              <StandardToolbar />
+              <Red style={{ height: "100%" }} />
+            </View>
+            <Flexbox resizeable column style={{ flex: 1 }}>
+              <View resizeable style={{ flex: 1 }} title="Brown Bear">
+                <StandardToolbar />
+                <Brown style={{ height: "100%" }} />
+              </View>
+              <View resizeable style={{ flex: 1 }} title="Red Panda">
+                <StandardToolbar />
+                <Component style={{ backgroundColor: "red", height: "100%" }} />
+              </View>
+
+              <Flexbox resizeable style={{ flex: 1 }}>
+                <Tabs resizeable style={{ flex: 1 }}>
+                  <Component
+                    removable
+                    style={{ backgroundColor: "white" }}
+                    title="Snow White"
+                  />
+                  <View title="Yellow Fever" removable>
+                    <Toolbar>
+                      <input type="text" className="tool-text" value="text 1" />
+                      <input type="text" className="tool-text" value="text 2" />
+                      <input type="text" className="tool-text" value="text 3" />
+                      <input type="text" className="tool-text" value="text 4" />
+                      <CloseAction />
+                    </Toolbar>
+                    <Component style={{ backgroundColor: "yellow", flex: 1 }} />
+                  </View>
+                  <Component
+                    removable
+                    style={{ backgroundColor: "blue" }}
+                    title="Blue Monday"
+                  />
+                </Tabs>
+                <Component
+                  resizeable
+                  style={{ backgroundColor: "green", width: 50 }}
+                />
+              </Flexbox>
+            </Flexbox>
+          </Flexbox>
+          <Component style={{ backgroundColor: "grey", height: 32 }} />
+        </Flexbox>
+      </DraggableLayout>
+
+      <br />
+      <button onClick={back}>Back</button>
+      <button onClick={() => load("layout1")}>Test1</button>
+      <button onClick={() => load("layout2")}>Test2</button>
+      <button onClick={() => load("layout3")}>Test3</button>
+      <button onClick={() => load("layout4")}>Test4</button>
+      <button onClick={() => load("layout5")}>Test5</button>
+      <button onClick={() => load("layout6")}>Test6</button>
+    </>
+  );
+}
+
+/*
+
       <DraggableLayout>
         <Flexbox
           column
@@ -183,14 +254,4 @@ export default function App() {
           <Component style={{ backgroundColor: "grey", height: 32 }} />
         </Flexbox>
       </DraggableLayout>
-      <br />
-      <button onClick={back}>Back</button>
-      <button onClick={() => load("layout1")}>Test1</button>
-      <button onClick={() => load("layout2")}>Test2</button>
-      <button onClick={() => load("layout3")}>Test3</button>
-      <button onClick={() => load("layout4")}>Test4</button>
-      <button onClick={() => load("layout5")}>Test5</button>
-      <button onClick={() => load("layout6")}>Test6</button>
-    </>
-  );
-}
+*/

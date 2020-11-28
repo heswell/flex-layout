@@ -3,80 +3,61 @@ import useLayout from "./useLayout";
 import { Action } from "./layout-action";
 import { Tab, TabPanel, Tabstrip } from "./tabs";
 import { Toolbar, Tooltray } from "./toolbar";
-import { componentFromLayout, isTypeOf } from "./utils";
 import { registerComponent } from "./registry/ComponentRegistry";
-import { useId } from "./utils";
 import { CloseIcon, MaximizeIcon, MinimizeIcon } from "./icons";
 
 import "./Tabs.css";
 
-const Tabs = (props) => {
-  const [layoutModel, dispatch] = useLayout("Flexbox", props);
-  const id = useId(props.id);
+const Tabs = (inputProps) => {
+  const [props, dispatch] = useLayout("Tabs", inputProps);
   const {
+    id,
     keyBoardActivation = "automatic",
     onTabSelectionChanged,
     style
   } = props;
 
   const handleTabSelection = (e, nextIdx) => {
-    dispatch({ type: Action.SWITCH_TAB, path: layoutModel.path, nextIdx });
-
+    dispatch({ type: Action.SWITCH_TAB, path: props.path, nextIdx });
     if (onTabSelectionChanged) {
       onTabSelectionChanged(nextIdx);
     }
   };
 
   const handleTabDelete = (e, tabIndex) => {
-    dispatch({
-      type: Action.REMOVE,
-      layoutModel: layoutModel.children[tabIndex]
-    });
+    // dispatch({
+    //   type: Action.REMOVE,
+    //   layoutModel: layoutModel.children[tabIndex]
+    // });
   };
 
   function renderContent() {
     const {
       active = 0,
-      children: { [active]: childLayoutModel }
-    } = layoutModel;
-    const {
-      children: { [active]: propsChild }
+      children: { [active]: child }
     } = props;
-
-    const child = isTypeOf(propsChild, childLayoutModel.type)
-      ? propsChild
-      : componentFromLayout(childLayoutModel);
-
-    // THis is wasteful when we have already renderedFromLayout
-    const dolly = React.cloneElement(child, {
-      dispatch,
-      key: childLayoutModel.path,
-      layoutModel: childLayoutModel,
-      style: childLayoutModel.style
-    });
-
-    return dolly;
+    return child;
   }
 
   const renderTabs = () =>
-    layoutModel.children.map((child, idx) => (
+    props.children.map((child, idx) => (
       <Tab
         ariaControls={`${id}-${idx}-tab`}
         key={idx}
         id={`${id}-${idx}`}
-        label={child.title}
-        deletable={child.removable}
+        label={child.props.title}
+        deletable={child.props.removable}
       />
     ));
 
   return (
-    <div className="Tabs" style={style}>
+    <div className="Tabs" style={style} id={id}>
       <Toolbar height={36} maxRows={1}>
         <Tabstrip
           keyBoardActivation={keyBoardActivation}
           onChange={handleTabSelection}
           onDelete={handleTabDelete}
-          value={layoutModel.active}
+          value={props.active || 0}
         >
           {renderTabs()}
         </Tabstrip>
@@ -87,8 +68,8 @@ const Tabs = (props) => {
         </Tooltray>
       </Toolbar>
       <TabPanel
-        id={`${id}-${layoutModel.active}-tab`}
-        ariaLabelledBy={`${id}-${layoutModel.active}`}
+        id={`${id}-${props.active || 0}-tab`}
+        ariaLabelledBy={`${id}-${props.active || 0}`}
         rootId={id}
       >
         {renderContent()}

@@ -7,6 +7,8 @@
   "dependencies": {
     "@heswell/utils": "2.0.4",
     "classnames": "2.2.6",
+    "d3-selection": "2.0.0",
+    "d3-transition": "2.0.0",
     "react": "16.14.0",
     "react-dom": "16.14.0",
     "react-scripts": "3.4.3"
