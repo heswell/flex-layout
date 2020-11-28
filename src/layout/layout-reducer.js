@@ -6,10 +6,11 @@ import {
   followPath,
   followPathToParent,
   nextStep,
+  resetPath,
   typeOf
 } from "./utils";
-import { getManagedDimension, resetPath } from "./applyLayout";
-import ComponentRegistry from "./registry/ComponentRegistry";
+import { getManagedDimension } from "./applyLayout";
+import { ComponentRegistry } from "./registry/ComponentRegistry";
 
 const MISSING_TYPE = undefined;
 
@@ -418,12 +419,12 @@ function _wrapRoot(model, source, pos) {
     style: { ...model.style, flex: 1 },
     resizeable: true
   });
-
+  debugger;
   var wrapper = React.createElement(
     ComponentRegistry[type],
     {
       id: uuid(),
-      path: "0", // this isn't right
+      path: "0",
       type,
       active,
       style,
@@ -442,54 +443,75 @@ function _wrap(model, source, target, pos) {
 
   if (finalStep) {
     const { type, flexDirection } = getLayoutSpec(pos);
-    const active =
-      type === "TabbedContainer" || pos.position.SouthOrEast ? 1 : 0;
+    const active = type === "Tabs" || pos.position.SouthOrEast ? 1 : 0;
     target = children[idx];
 
     // TODO handle scenario where items have been resized, so have flexBasis values set
     const style = {
-      ...removeVisualStyles(target.style),
-      flexDirection
+      flexDirection,
+      // TODO these need to come from source
+      flexBasis: 0,
+      flexGrow: 1,
+      flexShrink: 1
     };
 
     // If we're going to render source in a flex container, can we allow the dimensions
     // to be managed by flex ? Assume yes if the component is resizeable.
     const [dim] = getManagedDimension(style);
 
-    const measurements = calculateSizesOfFlexChildren(
-      [target],
-      target.$path,
-      dim,
-      pos
+    // const measurements = calculateSizesOfFlexChildren(
+    //   [target],
+    //   target.props.path,
+    //   dim,
+    //   pos
+    // );
+    // const nestedSource = assignFlexDimension(source, dim, measurements[0]);
+    // const nestedTarget = assignFlexDimension(target, dim, measurements[1]);
+    // This assumes flexBox ...
+    const targetFirst = pos.position.SouthOrEast || pos.position.Header;
+    const nestedSource = React.cloneElement(source, {
+      path: `${target.props.path}.${targetFirst ? 1 : 0}`,
+      style: {
+        ...source.props.style,
+        flexBasis: 0,
+        flexGrow: 1,
+        flexShrink: 1
+      }
+    });
+    const nestedTarget = React.cloneElement(target, {
+      path: `${target.props.path}.${targetFirst ? 0 : 1}`,
+      style: {
+        ...target.props.style,
+        flexBasis: 0,
+        flexGrow: 1,
+        flexShrink: 1
+      }
+    });
+
+    var wrapper = React.createElement(
+      ComponentRegistry[type],
+      {
+        active,
+        dispatch: target.props.dispatch,
+        id: uuid(),
+        path: target.props.path,
+        // TODO we should be able to configure this in setDefaultLayoutProps
+        splitterSize:
+          type === "Flexbox" && typeOf(model) === "Flexbox"
+            ? model.props.splitterSize
+            : undefined,
+        style,
+        resizeable: target.props.resizeable
+      },
+      targetFirst ? [nestedTarget, nestedSource] : [nestedSource, nestedTarget]
     );
-    const nestedSource = assignFlexDimension(source, dim, measurements[0]);
-    const nestedTarget = assignFlexDimension(target, dim, measurements[1]);
-
-    var wrapper = {
-      type,
-      active,
-      $id: uuid(),
-      // TODO we should be able to configure this in setDefaultLayoutProps
-      splitterSize:
-        type === "FlexBox" && model.type === "FlexBox"
-          ? model.splitterSize
-          : undefined,
-      style,
-      resizeable: target.resizeable,
-      children:
-        pos.position.SouthOrEast || pos.position.Header
-          ? [nestedTarget, nestedSource]
-          : [nestedSource, nestedTarget]
-    };
-
     addDefaultLayoutProps(type, wrapper);
 
     children.splice(idx, 1, wrapper);
   } else {
     children[idx] = _wrap(children[idx], source, target, pos);
   }
-
-  return { ...model, children };
+  return React.cloneElement(model, null, children);
 }
 
 function insert(model, source, into, before, after, size) {
@@ -691,4 +713,20 @@ function getLayoutSpec(pos) {
   }
 
   return { type, flexDirection };
+}
+
+// TODO how do we set these ate runtime
+function addDefaultLayoutProps(type, layoutProps) {
+  if (type === "Tabs") {
+    if (!layoutProps.header) {
+      layoutProps.header = {
+        type: "Tabstrip",
+        style: { height: 26 }
+      };
+    }
+    if (layoutProps.active === undefined) {
+      layoutProps.active = 0;
+    }
+  }
+  return layoutProps;
 }

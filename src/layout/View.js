@@ -9,9 +9,10 @@ import { Action } from "./layout-action";
 import "./View.css";
 
 const View = React.memo(function View(inputProps) {
-  const [props, dispatch] = useLayout("Flexbox", inputProps);
+  const [props, dispatch] = useLayout("View", inputProps);
+  console.log(`[View] render ${props.title} ${props.path}`);
   const root = useRef(null);
-  const { children, id, header, path, style } = props;
+  const { children, id, header, path, style, title } = props;
   const headerProps = typeof header === "object" ? header : {};
   const handleClose = () => {
     dispatch({ type: Action.REMOVE, path: props.path });
@@ -44,7 +45,7 @@ const View = React.memo(function View(inputProps) {
 
   return (
     <div className="View" id={id} ref={root} style={style}>
-      <ViewContext.Provider value={{ dispatch: dispatchAction }}>
+      <ViewContext.Provider value={{ dispatch: dispatchAction, path, title }}>
         {header ? (
           <Header
             {...headerProps}

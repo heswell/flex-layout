@@ -83,19 +83,3 @@ const getStyle = (type, props, parentType) => {
 
   return style;
 };
-
-export function resetPath(model, path) {
-  if (model.props.path === path) {
-    return model;
-  }
-  const children = [];
-  // React.Children.map rewrites keys, forEach does not
-  React.Children.forEach(model.props.children, (child, i) => {
-    if (!child.props.path) {
-      children.push(child);
-    } else {
-      children.push(resetPath(child, `${path}.${i}`));
-    }
-  });
-  return React.cloneElement(model, { path }, children);
-}

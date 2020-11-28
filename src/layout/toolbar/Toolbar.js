@@ -9,6 +9,7 @@ import cx from "classnames";
 import ResponsiveContainer from "../responsive/ResponsiveContainer";
 import { PopupService } from "../popup";
 import { findFirstOverflow } from "./overflowUtils";
+import { useViewContext } from "../ViewContext";
 
 import * as icon from "../icons";
 import useResizeObserver from "../responsive/useResizeObserver";
@@ -49,6 +50,7 @@ const Toolbar = ({
   height: heightProp = 32,
   id,
   sizes,
+  showTitle,
   style,
   tools,
   stops,
@@ -62,6 +64,7 @@ const Toolbar = ({
   const [overflowing, setOverflowing] = useState(false);
   const [showOverflow, setShowOverflow] = useState(false);
   const dispatchViewAction = useViewAction();
+  const { path, title } = useViewContext();
 
   const handleOverflowClick = () => {
     setShowOverflow((show) => !show);
@@ -93,6 +96,10 @@ const Toolbar = ({
       }),
     [getTools, size]
   );
+
+  const renderTitle = () => {
+    return <span className="toolbar-title">{`${title} ${path}`}</span>;
+  };
 
   const getOverflowedTools = useCallback(() => {
     const toolElements = Array.from(innerContainer.current.childNodes);
@@ -169,6 +176,7 @@ const Toolbar = ({
       style={{ ...style, height }}
     >
       <div className="Toolbar-inner" ref={innerContainer}>
+        {showTitle ? renderTitle() : null}
         {renderTools()}
       </div>
       {overflowing ? (

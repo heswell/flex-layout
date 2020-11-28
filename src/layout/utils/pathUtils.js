@@ -92,3 +92,19 @@ export function nextStep(pathSoFar, targetPath) {
     .map((n) => parseInt(n, 10));
   return { idx: paths[0], finalStep: paths.length === 1 };
 }
+
+export function resetPath(model, path) {
+  if (model.props.path === path) {
+    return model;
+  }
+  const children = [];
+  // React.Children.map rewrites keys, forEach does not
+  React.Children.forEach(model.props.children, (child, i) => {
+    if (!child.props.path) {
+      children.push(child);
+    } else {
+      children.push(resetPath(child, `${path}.${i}`));
+    }
+  });
+  return React.cloneElement(model, { path }, children);
+}

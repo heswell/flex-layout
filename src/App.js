@@ -33,7 +33,7 @@ export default function App() {
   };
 
   const StandardToolbar = () => (
-    <Toolbar style={{ justifyContent: "flex-end" }} draggable>
+    <Toolbar style={{ justifyContent: "flex-end" }} draggable showTitle>
       <CloseAction action="close" />
     </Toolbar>
   );
