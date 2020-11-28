@@ -1,6 +1,7 @@
 import React from "react";
 import useLayout from "./useLayout";
 import { Action } from "./layout-action";
+import Component from "./Component";
 import { Tab, TabPanel, Tabstrip } from "./tabs";
 import { Toolbar, Tooltray } from "./toolbar";
 import { registerComponent } from "./registry/ComponentRegistry";
@@ -11,6 +12,7 @@ import "./Tabs.css";
 const Tabs = (inputProps) => {
   const [props, dispatch] = useLayout("Tabs", inputProps);
   const {
+    enableAddTab,
     id,
     keyBoardActivation = "automatic",
     onTabSelectionChanged,
@@ -24,11 +26,19 @@ const Tabs = (inputProps) => {
     }
   };
 
-  const handleTabDelete = (e, tabIndex) => {
-    // dispatch({
-    //   type: Action.REMOVE,
-    //   layoutModel: layoutModel.children[tabIndex]
-    // });
+  const handleDeleteTab = (e, tabIndex) => {
+    const doomedChild = props.children[tabIndex];
+    dispatch({
+      type: Action.REMOVE,
+      path: doomedChild.props.path
+    });
+  };
+
+  const handleAddTab = (e, tabIndex) => {
+    dispatch({
+      type: Action.ADD,
+      component: <Component style={{ backgroundColor: "pink" }} />
+    });
   };
 
   function renderContent() {
@@ -54,9 +64,11 @@ const Tabs = (inputProps) => {
     <div className="Tabs" style={style} id={id}>
       <Toolbar height={36} maxRows={1}>
         <Tabstrip
+          enableAddTab={enableAddTab}
           keyBoardActivation={keyBoardActivation}
           onChange={handleTabSelection}
-          onDelete={handleTabDelete}
+          onAddTab={handleAddTab}
+          onDeleteTab={handleDeleteTab}
           value={props.active || 0}
         >
           {renderTabs()}

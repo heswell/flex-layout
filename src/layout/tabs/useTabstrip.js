@@ -16,7 +16,7 @@ export default function useTabstrip(
     children,
     keyBoardActivation,
     onChange,
-    onDelete,
+    onDeleteTab,
     orientation,
     value
   },
@@ -113,7 +113,7 @@ export default function useTabstrip(
   };
 
   const handleDeleteTab = (e, tabIndex) => {
-    onDelete(e, tabIndex);
+    onDeleteTab(e, tabIndex);
     if (tabIndex - 1 < 0) {
       focusTab(0);
     } else {

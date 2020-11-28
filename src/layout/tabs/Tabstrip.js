@@ -1,13 +1,22 @@
 import React, { useRef } from "react";
 import cx from "classnames";
 import useTabstrip from "./useTabstrip";
+import { AddIcon } from "../icons";
 
 import "./Tabstrip.css";
+
+const AddTabButton = (props) => {
+  return (
+    <div className="tab-add" {...props}>
+      <AddIcon />
+    </div>
+  );
+};
 
 const Tabstrip = (props) => {
   const root = useRef(null);
   const { indicatorProps, tabProps, tabRef } = useTabstrip(props, root);
-  const { children, style, closeButton, onClose, value } = props;
+  const { children, enableAddTab, onAddTab, style, value } = props;
 
   const renderTabs = () =>
     React.Children.map(children, (child, index) =>
@@ -22,10 +31,10 @@ const Tabstrip = (props) => {
   return (
     <div className={cx("Tabstrip")} ref={root} role="tablist" style={style}>
       {renderTabs()}
+      {enableAddTab ? <AddTabButton onClick={onAddTab} /> : null}
       {indicatorProps ? (
         <div className="ActiveIndicator" {...indicatorProps} />
       ) : null}
-      {closeButton ? <button onClick={onClose}>X</button> : null}
     </div>
   );
 };

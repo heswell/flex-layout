@@ -3,6 +3,7 @@ export const Action = {
   DRAG_STARTED: "drag-started",
   DRAG_DROP: "drag-drop",
   INITIALIZE: "initialize",
+  ADD: "add",
   REMOVE: "remove",
   REPLACE: "replace",
   SPLITTER_RESIZE: "splitter-resize",

@@ -58,13 +58,17 @@ export default function App() {
               </View>
 
               <Flexbox resizeable style={{ flex: 1 }}>
-                <Tabs resizeable style={{ flex: 1 }}>
+                <Tabs
+                  enableAddTab
+                  resizeable
+                  style={{ flex: 1 }}
+                  keyBoardActivation="manual"
+                >
                   <Component
-                    removable
                     style={{ backgroundColor: "white" }}
-                    title="Snow White"
+                    title="Home"
                   />
-                  <View title="Yellow Fever" removable>
+                  <View title="Transactions">
                     <Toolbar>
                       <input type="text" className="tool-text" value="text 1" />
                       <input type="text" className="tool-text" value="text 2" />
@@ -77,7 +81,17 @@ export default function App() {
                   <Component
                     removable
                     style={{ backgroundColor: "blue" }}
-                    title="Blue Monday"
+                    title="Loans"
+                  />
+                  <Component
+                    removable
+                    style={{ backgroundColor: "ivory" }}
+                    title="Checks"
+                  />
+                  <Component
+                    removable
+                    style={{ backgroundColor: "lightgrey" }}
+                    title="Liquidity"
                   />
                 </Tabs>
                 <Component

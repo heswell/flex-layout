@@ -4,7 +4,12 @@ body {
 }
 
 :root {
+  --grey20: #eaedef;
+  --grey20: #eaedef;
+  --grey40: #d9dde3;
   --grey60: #c5c9d0;
+  --grey90: #84878e;
+  --grey300: #4c505b;
   --grey400: #44484f;
   --grey900: #161616;
 
