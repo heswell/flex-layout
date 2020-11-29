@@ -8,6 +8,7 @@ import React, {
 import cx from "classnames";
 import { useForkRef } from "../utils";
 import { CloseIcon } from "../icons";
+import { useViewAction } from "../ViewContext";
 
 import "./Tab.css";
 
@@ -24,6 +25,7 @@ const Tab = forwardRef(
     {
       ariaControls,
       deletable,
+      draggable,
       selected,
       id,
       index,
@@ -38,6 +40,7 @@ const Tab = forwardRef(
     const root = useRef(null);
     const setRef = useForkRef(ref, root);
     const [closeHover, setCloseHover] = useState(false);
+    const dispatchViewAction = useViewAction();
 
     useImperativeHandle(ref, () => ({
       focus: () => root.current.focus(),
@@ -77,6 +80,12 @@ const Tab = forwardRef(
       setCloseHover(false);
     };
 
+    const handleMouseDown = (e) => {
+      if (draggable) {
+        dispatchViewAction({ type: "mousedown", index }, e);
+      }
+    };
+
     // TODO is it ok for the close button to be a span ?
     // button cannot be nested within button. toolkit
     // uses side-by-side buttons
@@ -88,6 +97,7 @@ const Tab = forwardRef(
         onClick={handleClick}
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
+        onMouseDown={handleMouseDown}
         ref={setRef}
         id={id}
         role="tab"

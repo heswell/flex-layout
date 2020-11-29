@@ -88,35 +88,36 @@ export default function App() {
                   style={{ flex: 1 }}
                   keyBoardActivation="manual"
                 >
-                  <Component
-                    style={{ backgroundColor: "white" }}
-                    title="Home"
-                  />
+                  <View removable header resizeable title="Home">
+                    <Component
+                      style={{ backgroundColor: "white", height: "100%" }}
+                    />
+                  </View>
                   <View title="Transactions">
                     <Toolbar>
-                      <input type="text" className="tool-text" value="text 1" />
+                      {/* <input type="text" className="tool-text" value="text 1" />
                       <input type="text" className="tool-text" value="text 2" />
                       <input type="text" className="tool-text" value="text 3" />
-                      <input type="text" className="tool-text" value="text 4" />
+                      <input type="text" className="tool-text" value="text 4" /> */}
                       <CloseAction />
                     </Toolbar>
                     <Component style={{ backgroundColor: "yellow", flex: 1 }} />
                   </View>
-                  <Component
-                    removable
-                    style={{ backgroundColor: "blue" }}
-                    title="Loans"
-                  />
-                  <Component
-                    removable
-                    style={{ backgroundColor: "ivory" }}
-                    title="Checks"
-                  />
-                  <Component
-                    removable
-                    style={{ backgroundColor: "lightgrey" }}
-                    title="Liquidity"
-                  />
+                  <View removable header resizeable title="Loans">
+                    <Component
+                      style={{ backgroundColor: "cream", height: "100%" }}
+                    />
+                  </View>
+                  <View removable header resizeable title="Checks">
+                    <Component
+                      style={{ backgroundColor: "ivory", height: "100%" }}
+                    />
+                  </View>
+                  <View removable header resizeable title="Liquidity">
+                    <Component
+                      style={{ backgroundColor: "lightgrey", height: "100%" }}
+                    />
+                  </View>
                 </Tabs>
                 <Component
                   resizeable

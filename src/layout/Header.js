@@ -1,10 +1,17 @@
 import React from "react";
 import { Toolbar } from "./toolbar";
 import { CloseIcon } from "./icons";
+import { useViewAction } from "./ViewContext";
 
 import "./Header.css";
 
-const Header = ({ style, title, closeButton, onClose }) => {
+const Header = ({ style, title, closeButton }) => {
+  const dispatchViewAction = useViewAction();
+
+  const handleClose = () => {
+    dispatchViewAction("close");
+  };
+
   return (
     <Toolbar
       className="Header"
@@ -12,7 +19,7 @@ const Header = ({ style, title, closeButton, onClose }) => {
       draggable
       showTitle
     >
-      <CloseIcon onClick={onClose} />
+      <CloseIcon onClick={handleClose} />
     </Toolbar>
   );
 };

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useRef } from "react";
 import useLayout from "./useLayout";
 import { Action } from "./layout-action";
 import Component from "./Component";
 import { Tab, TabPanel, Tabstrip } from "./tabs";
+import ViewContext, { useViewActionDispatcher } from "./ViewContext";
 import { Toolbar, Tooltray } from "./toolbar";
 import { registerComponent } from "./registry/ComponentRegistry";
 import { CloseIcon, MaximizeIcon, MinimizeIcon } from "./icons";
@@ -10,14 +11,18 @@ import { CloseIcon, MaximizeIcon, MinimizeIcon } from "./icons";
 import "./Tabs.css";
 
 const Tabs = (inputProps) => {
+  const root = useRef(null);
   const [props, dispatch] = useLayout("Tabs", inputProps);
   const {
     enableAddTab,
     id,
     keyBoardActivation = "automatic",
     onTabSelectionChanged,
+    path,
     style
   } = props;
+
+  const dispatchViewAction = useViewActionDispatcher(root, path, dispatch);
 
   const handleTabSelection = (e, nextIdx) => {
     dispatch({ type: Action.SWITCH_TAB, path: props.path, nextIdx });
@@ -53,6 +58,7 @@ const Tabs = (inputProps) => {
     props.children.map((child, idx) => (
       <Tab
         ariaControls={`${id}-${idx}-tab`}
+        draggable
         key={idx}
         id={`${id}-${idx}`}
         label={child.props.title}
@@ -61,31 +67,33 @@ const Tabs = (inputProps) => {
     ));
 
   return (
-    <div className="Tabs" style={style} id={id}>
-      <Toolbar className="Header" height={36} maxRows={1}>
-        <Tabstrip
-          enableAddTab={enableAddTab}
-          keyBoardActivation={keyBoardActivation}
-          onChange={handleTabSelection}
-          onAddTab={handleAddTab}
-          onDeleteTab={handleDeleteTab}
-          value={props.active || 0}
+    <div className="Tabs" style={style} id={id} ref={root}>
+      <ViewContext.Provider value={{ dispatch: dispatchViewAction }}>
+        <Toolbar className="Header" draggable height={36} maxRows={1}>
+          <Tabstrip
+            enableAddTab={enableAddTab}
+            keyBoardActivation={keyBoardActivation}
+            onChange={handleTabSelection}
+            onAddTab={handleAddTab}
+            onDeleteTab={handleDeleteTab}
+            value={props.active || 0}
+          >
+            {renderTabs()}
+          </Tabstrip>
+          <Tooltray align="right">
+            <MinimizeIcon />
+            <MaximizeIcon />
+            <CloseIcon />
+          </Tooltray>
+        </Toolbar>
+        <TabPanel
+          id={`${id}-${props.active || 0}-tab`}
+          ariaLabelledBy={`${id}-${props.active || 0}`}
+          rootId={id}
         >
-          {renderTabs()}
-        </Tabstrip>
-        <Tooltray align="right">
-          <MinimizeIcon />
-          <MaximizeIcon />
-          <CloseIcon />
-        </Tooltray>
-      </Toolbar>
-      <TabPanel
-        id={`${id}-${props.active || 0}-tab`}
-        ariaLabelledBy={`${id}-${props.active || 0}`}
-        rootId={id}
-      >
-        {renderContent()}
-      </TabPanel>
+          {renderContent()}
+        </TabPanel>
+      </ViewContext.Provider>
     </div>
   );
 };

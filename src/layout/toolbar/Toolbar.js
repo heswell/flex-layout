@@ -13,7 +13,6 @@ import { useViewContext } from "../ViewContext";
 
 import * as icon from "../icons";
 import useResizeObserver from "../responsive/useResizeObserver";
-import { useViewAction } from "../ViewContext";
 import { MoreVerticalIcon } from "../icons";
 import { registerComponent } from "../registry/ComponentRegistry";
 
@@ -49,8 +48,6 @@ const Toolbar = ({
   draggable,
   height: heightProp = 32,
   id,
-  onMouseDown,
-  sizes,
   showTitle,
   style,
   tools,
@@ -64,8 +61,7 @@ const Toolbar = ({
   const [size, setSize] = useState("lg");
   const [overflowing, setOverflowing] = useState(false);
   const [showOverflow, setShowOverflow] = useState(false);
-  const dispatchViewAction = useViewAction();
-  const { path, title } = useViewContext();
+  const { path, title, dispatch: dispatchViewAction } = useViewContext();
 
   const handleOverflowClick = () => {
     setShowOverflow((show) => !show);
@@ -95,7 +91,7 @@ const Toolbar = ({
           return <Icon key={index} />;
         }
       }),
-    [getTools, size]
+    [dispatchViewAction, getTools, size]
   );
 
   const renderTitle = () => {
@@ -160,6 +156,7 @@ const Toolbar = ({
   // useDraggable
   const handleMouseDown = (e) => {
     if (draggable) {
+      console.log(`Toolbar handleMouseDown`);
       dispatchViewAction({ type: "mousedown" }, e);
     }
   };

@@ -10,7 +10,7 @@ import {
   typeOf
 } from "./utils";
 import { getManagedDimension } from "./layoutUtils";
-import { ComponentRegistry } from "./registry/ComponentRegistry";
+import { ComponentRegistry, isContainer } from "./registry/ComponentRegistry";
 
 const MISSING_TYPE = undefined;
 
@@ -199,7 +199,7 @@ function dragDrop(state, action) {
       return insert(state, source, null, before, after);
     } else {
       console.log("WRAP");
-      // return wrap(state, source, target, pos);
+      return wrap(state, source, target, pos);
     }
   } else if (pos.position.Centre) {
     console.log("REPLACE");
@@ -374,7 +374,6 @@ function dropLayoutIntoContainer(
         );
       }
     } else if (againstTheGrain(pos, targetContainer)) {
-      //onsole.log('CASE 4D) Works.');
       return wrap(layoutModel, source, target, pos);
     } else if (isContainer(targetContainer)) {
       return wrap(layoutModel, source, target, pos);
@@ -474,7 +473,9 @@ function _wrap(model, source, target, pos) {
         ...source.props.style,
         flexBasis: 0,
         flexGrow: 1,
-        flexShrink: 1
+        flexShrink: 1,
+        width: "auto",
+        height: "auto"
       }
     });
     const nestedTarget = React.cloneElement(target, {
@@ -483,7 +484,9 @@ function _wrap(model, source, target, pos) {
         ...target.props.style,
         flexBasis: 0,
         flexGrow: 1,
-        flexShrink: 1
+        flexShrink: 1,
+        width: "auto",
+        height: "auto"
       }
     });
 
@@ -532,19 +535,25 @@ function insert(model, source, into, before, after, size) {
     } else {
       const [dim] = getManagedDimension(model.props.style);
       // TODO take size into account here, within the calculateSizesOfFlexChildren function
-      const measurements = calculateSizesOfFlexChildren(
-        model.props.children,
-        before || after,
-        dim,
-        { [dim]: size }
-      );
+      // const measurements = calculateSizesOfFlexChildren(
+      //   model.props.children,
+      //   before || after,
+      //   dim,
+      //   { [dim]: size }
+      // );
       children = model.props.children.reduce((arr, child, i) => {
         // idx of -1 means we just insert into end
         const childIdx = arr.length;
         if (idx === i) {
           if (isFlexBox) {
-            source = assignFlexDimension(source, dim, measurements[childIdx]);
-            child = assignFlexDimension(child, dim, measurements[childIdx + 1]);
+            source = assignFlexDimension(
+              source,
+              dim /*, measurements[childIdx]*/
+            );
+            child = assignFlexDimension(
+              child,
+              dim /*, measurements[childIdx + 1]*/
+            );
           } else {
             const {
               style: {
@@ -569,14 +578,21 @@ function insert(model, source, into, before, after, size) {
             arr.push(child, source);
           }
         } else {
-          arr.push(assignFlexDimension(child, dim, measurements[childIdx]));
+          arr.push(
+            assignFlexDimension(child, dim /*, measurements[childIdx]*/)
+          );
         }
         return arr;
       }, []);
 
+      const insertedIdx = children.indexOf(source);
       if (type === "Tabs") {
-        active = children.indexOf(source);
+        active = insertedIdx;
       }
+
+      children = children.map((child, i) =>
+        i < insertedIdx ? child : resetPath(child, `${path}.${i}`)
+      );
     }
   } else {
     children = model.props.children.slice();
@@ -585,7 +601,7 @@ function insert(model, source, into, before, after, size) {
   return React.cloneElement(model, { ...model.props, active }, children);
 }
 
-function assignFlexDimension(model, dim, size) {
+function assignFlexDimension(model, dim, size = 0) {
   const {
     style: { flexBasis, height, width, ...otherStyles }
   } = model.props;
@@ -600,7 +616,7 @@ function assignFlexDimension(model, dim, size) {
 
   const style = {
     ...otherStyles,
-    [dim]: size,
+    // [dim]: size,
     flexBasis: "auto",
     flexGrow: 1,
     flexShrink: 1
