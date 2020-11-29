@@ -1,7 +1,8 @@
 import React, { useRef, useState } from "react";
 import { Brown, Red } from "./sample-components";
-import * as sample from "./layout/examples";
+import * as samples from "./layout/examples";
 import { CloseIcon as CloseAction } from "./layout/icons";
+import { registerComponent } from "./layout/registry/ComponentRegistry";
 
 import {
   Component,
@@ -19,7 +20,7 @@ export default function App() {
   const [layout, setLayout] = useState();
 
   const handleLayoutChange = (layout) => {
-    // console.log(JSON.stringify(layout, null, 2));
+    console.log(JSON.stringify(layout, null, 2));
     // history.current.push(layout);
   };
 
@@ -29,7 +30,7 @@ export default function App() {
   };
 
   const load = (layout) => {
-    return setLayout(sample[layout]());
+    return setLayout(samples[layout]());
   };
 
   const StandardToolbar = () => (
@@ -37,10 +38,11 @@ export default function App() {
       <CloseAction action="close" />
     </Toolbar>
   );
+  registerComponent("StandardToolbar", StandardToolbar);
 
   return (
     <>
-      <DraggableLayout>
+      <DraggableLayout onLayoutChange={handleLayoutChange} layout={layout}>
         <Flexbox column style={{ height: 1000, width: 1200 }}>
           <Flexbox style={{ flex: 1 }}>
             <View resizeable style={{ minWidth: 50, width: 200 }}>
@@ -106,13 +108,11 @@ export default function App() {
       </DraggableLayout>
 
       <br />
-      <button onClick={back}>Back</button>
-      <button onClick={() => load("layout1")}>Test1</button>
-      <button onClick={() => load("layout2")}>Test2</button>
-      <button onClick={() => load("layout3")}>Test3</button>
-      <button onClick={() => load("layout4")}>Test4</button>
-      <button onClick={() => load("layout5")}>Test5</button>
-      <button onClick={() => load("layout6")}>Test6</button>
+      {Object.keys(samples).map((sample, i) => (
+        <button key={i} onClick={() => load(sample)}>
+          {sample}
+        </button>
+      ))}
     </>
   );
 }

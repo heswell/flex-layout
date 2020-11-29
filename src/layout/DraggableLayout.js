@@ -36,6 +36,20 @@ const DraggableLayout = (inputProps) => {
     customDispatcher
   );
 
+  useEffect(() => {
+    console.log(
+      `%cDraggable layout mounted ${root.props.id}`,
+      "color:brown;font-weight: bold;"
+    );
+    return () =>
+      console.log(
+        `%c>>>Draggable layout unmounted ${root.props.id}`,
+        "color:brown;font-weight: bold;"
+      );
+  }, []);
+
+  console.log(`[DraggableLayout]:render root key ${root.props.id}`);
+
   const [_, setDrag] = useState(-1.0);
   const dragOperation = useRef(null);
 

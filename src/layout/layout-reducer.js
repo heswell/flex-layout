@@ -9,7 +9,7 @@ import {
   resetPath,
   typeOf
 } from "./utils";
-import { getManagedDimension } from "./applyLayout";
+import { getManagedDimension } from "./layoutUtils";
 import { ComponentRegistry } from "./registry/ComponentRegistry";
 
 const MISSING_TYPE = undefined;

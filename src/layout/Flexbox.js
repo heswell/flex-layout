@@ -23,9 +23,10 @@ const useSizesRef = () => {
 
 const Flexbox = function Flexbox(inputProps) {
   const [props, dispatch] = useLayout("Flexbox", inputProps);
-  const { children, column, id, path, style } = props;
+  const { children, id, path, style } = props;
+  const isColumn = style.flexDirection === "column";
   const [sizesRef, setSizes, clearSizes] = useSizesRef([]);
-  const dimension = column ? "height" : "width";
+  const dimension = isColumn ? "height" : "width";
   const rootRef = useRef(null);
 
   const handleDragStart = useCallback(() => {
@@ -60,7 +61,7 @@ const Flexbox = function Flexbox(inputProps) {
 
   const createSplitter = (i) => (
     <Splitter
-      column={column}
+      column={isColumn}
       index={i}
       key={`splitter-${i}`}
       onDrag={handleDrag}
