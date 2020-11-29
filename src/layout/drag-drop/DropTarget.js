@@ -123,6 +123,7 @@ export class DropTarget {
   toArray() {
     let dropTarget = this;
     const dropTargets = [dropTarget];
+    // eslint-disable-next-line no-cond-assign
     while ((dropTarget = dropTarget.nextDropTarget)) {
       dropTargets.push(dropTarget);
     }
@@ -209,11 +210,6 @@ export function getNextDropTarget(layout, component, pos, measurements, x, y) {
         const clientRect = measurements[container.props.path];
         let containerPos = pointPositionWithinRect(x, y, clientRect);
 
-        // console.log(
-        //   `${typeOf(component)} positioned at outer edge of container ${typeOf(
-        //     container
-        //   )}`
-        // );
         // if its a VBox and we're close to left or right ...
         if (
           (isVBox(container) || isTabbedContainer(container)) &&
@@ -278,14 +274,14 @@ function isTabbedContainer(component) {
 
 function isVBox(component) {
   return (
-    typeOf(component) === "FlexBox" &&
+    typeOf(component) === "Flexbox" &&
     component.props.style.flexDirection === "column"
   );
 }
 
 function isHBox(component) {
   return (
-    typeOf(component) === "FlexBox" &&
+    typeOf(component) === "Flexbox" &&
     component.props.style.flexDirection === "row"
   );
 }

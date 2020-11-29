@@ -68,6 +68,7 @@ export default class DropTargetCanvas {
       if (sameDropTarget === false) {
         _dropTarget = dropTarget;
         _multiDropOptions = dropTarget.nextDropTarget != null;
+        console.log(`multiDropOptions = ${_multiDropOptions}`);
         // if (isTabstrip(dropTarget)) {
         //   moveExistingTabs(dropTarget);
         // } else {
