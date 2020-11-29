@@ -46,13 +46,7 @@ const View = React.memo(function View(inputProps) {
   return (
     <div className="View" id={id} ref={root} style={style}>
       <ViewContext.Provider value={{ dispatch: dispatchAction, path, title }}>
-        {header ? (
-          <Header
-            {...headerProps}
-            onClose={handleClose}
-            onMouseDown={handleMouseDown}
-          />
-        ) : null}
+        {header ? <Header {...headerProps} onClose={handleClose} /> : null}
         <div className="view-main">{children}</div>
       </ViewContext.Provider>
     </div>

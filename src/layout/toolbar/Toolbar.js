@@ -49,6 +49,7 @@ const Toolbar = ({
   draggable,
   height: heightProp = 32,
   id,
+  onMouseDown,
   sizes,
   showTitle,
   style,

@@ -34,7 +34,9 @@ const useLayout = (layoutType, props, customDispatcher) => {
           setState((c) => c + 1);
           if (props.onLayoutChange) {
             // TODO serialize layout
-            props.onLayoutChange(layoutToJSON(layoutType, props, nextState));
+            console.log(`serialize Layout`);
+            // TODO we have a circular deopendency in tree after a drag-start
+            //props.onLayoutChange(layoutToJSON(layoutType, props, nextState));
           }
         }
       })

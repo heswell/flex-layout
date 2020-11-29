@@ -128,7 +128,7 @@ function initDrag(rootContainer, dragContainerPath, dragRect, dragPos) {
 
   // translate the layout $position to drag-oriented co-ordinates, ignoring splitters
   _measurements = BoxModel.measure(rootContainer);
-  console.log(_measurements);
+  console.log({ measurements: _measurements });
   var end = window.performance.now();
   console.log(`[Draggable] measurements took ${end - start}ms`, _measurements);
 

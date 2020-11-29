@@ -62,7 +62,7 @@ const Tabs = (inputProps) => {
 
   return (
     <div className="Tabs" style={style} id={id}>
-      <Toolbar height={36} maxRows={1}>
+      <Toolbar className="Header" height={36} maxRows={1}>
         <Tabstrip
           enableAddTab={enableAddTab}
           keyBoardActivation={keyBoardActivation}

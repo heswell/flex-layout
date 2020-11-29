@@ -61,7 +61,7 @@ export class BoxModel {
   //TODO we should accept initial let,top offsets here
   static measure(model) {
     var measurements = {};
-    addMeasurements(model, measurements, 0, 0, 0, 0);
+    measureRootComponent(model, measurements);
     return measurements;
   }
 
@@ -161,140 +161,128 @@ export function pointPositionWithinRect(x, y, rect) {
   return { position, x, y, pctX, pctY, closeToTheEdge, tab };
 }
 
-function addMeasurements(model, measurements, preX, posX, preY, posY) {
+function measureRootComponent(model, measurements) {
   if (React.isValidElement(model)) {
     if (model.props.id && model.props.path) {
-      const componentMeasurements = addClientMeasurements(
-        model,
-        measurements,
-        preX,
-        posX,
-        preY,
-        posY
-      );
-
+      const [rect, el] = measureComponentDomElement(model);
+      measureComponent(model, rect, el, measurements);
       const type = typeOf(model);
       if (type !== "Tabs" && isContainer(type)) {
-        collectChildMeasurements(model, measurements, preX, posX, preY, posY);
+        collectChildMeasurements(model, measurements);
       }
-
-      return componentMeasurements;
     }
   }
 }
 
-function addClientMeasurements(model, measurements, preX, posX, preY, posY) {
-  const { id, path /*, header */ } = model.props;
-  const el = document.getElementById(id);
-  if (!el) {
-    console.log(`No DOM for ${typeOf(model)}`);
+function measureComponent(model, rect, el, measurements) {
+  const { path, header } = model.props;
+  measurements[path] = rect;
+  const type = typeOf(model);
+  if (header || type === "Tabs") {
+    const headerEl = el.querySelector(".Header");
+    if (headerEl) {
+      const { top, left, right, bottom } = headerEl.getBoundingClientRect();
+      measurements[path].header = { top, left, right, bottom };
+      if (type === "Tabs") {
+        measurements[path].tabs = Array.from(
+          headerEl.querySelectorAll(".Tabstrip .Tab")
+        )
+          .map((tab) => tab.getBoundingClientRect())
+          .map(({ left, right }) => ({ left, right }));
+      }
+    }
   }
-  let { top, left, width, height } = el.getBoundingClientRect();
-
-  left = left - preX;
-  top = top - preY;
-
-  const right = preX + left + width + posX;
-
-  measurements[path] = {
-    top,
-    left,
-    right,
-    bottom: preY + top + height + posY
-  };
-
-  // if (header || model.type === "TabbedContainer") {
-  //   //TODO don't assume headerheight = 34
-  //   measurements[$path].header = { top, left, right, bottom: top + 34 };
-
-  //   if (model.type === "TabbedContainer") {
-  //     console.log(`measuring a tabbedContainer ${$path}`);
-
-  //     const start = performance.now();
-  //     const tabMeasurements = measureTabs($id);
-  //     const end = performance.now();
-  //     console.log(`took ${end - start}ms to measure tabs`);
-  //     measurements[$path].tabs = tabMeasurements;
-  //   }
-  // }
-
   return measurements[path];
 }
 
-function collectChildMeasurements(model, measurements, preX, posX, preY, posY) {
+function collectChildMeasurements(
+  model,
+  measurements,
+  preX = 0,
+  posX = 0,
+  preY = 0,
+  posY = 0
+) {
   //onsole.log(`   collectChildMeasurements	x:${x}	y:${y}	preX:${preX}	posX:${posX}	preY:${preY}	posY:${posY}`);
 
-  const components = model.props.children.map((child, i, all) => {
-    // generate a 'local' splitter adjustment for children adjacent to splitters
-    let localPreX = 0;
-    let localPosX = 0;
-    let localPreY = 0;
-    let localPosY = 0;
+  const type = typeOf(model);
 
-    return addMeasurements(
-      child,
-      measurements,
-      localPreX,
-      localPosX,
-      localPreY,
-      localPosY
-    );
-  });
+  // Collect all the measurements in first pass ...
+  const childMeasurements = model.props.children.map(
+    measureComponentDomElement
+  );
 
-  // var components = model.props.children
-  //   .reduce((arr, child, idx, all) => {
-  //     if (child.type !== "Splitter" && child.type !== "layout") {
-  //       if (model.type === "FlexBox") {
-  //         var prev = all[idx - 1];
-  //         var next = all[idx + 1];
-  //         var n = all.length - 1;
+  // ...so that, in the second pass, we can identify gaps ...
+  const expandedMeasurements = childMeasurements.map(
+    ([rect, el, child], i, all) => {
+      // generate a 'local' splitter adjustment for children adjacent to splitters
+      let localPreX;
+      let localPosX;
+      let localPreY;
+      let localPosY;
+      let gapPre;
+      let gapPos;
+      const n = all.length - 1;
+      if (type === "Flexbox" && model.props.style.flexDirection === "row") {
+        gapPre = i === 0 ? 0 : rect.left - all[i - 1][0].right;
+        gapPos = i === n ? 0 : all[i + 1][0].left - rect.right;
+        localPreX = i === 0 ? preX : gapPre === 0 ? 0 : gapPre / 2;
+        localPosX = i === n ? posX : gapPos === 0 ? 0 : gapPos - gapPos / 2;
+        rect.left -= localPreX;
+        rect.right += localPosX;
+        localPreY = preY;
+        localPosY = posY;
+      } else if (
+        type === "Flexbox" &&
+        model.props.style.flexDirection === "column"
+      ) {
+        gapPre = i === 0 ? 0 : rect.top - all[i - 1][0].bottom;
+        gapPos = i === n ? 0 : all[i + 1][0].top - rect.bottom;
+        // we don't need to divide the leading gap, as half the gap will
+        // already have been assigned to the preceeding child in the
+        // previous loop iteration.
+        localPreY = i === 0 ? preY : gapPre === 0 ? 0 : gapPre;
+        localPosY = i === n ? posY : gapPos === 0 ? 0 : gapPos - gapPos / 2;
+        rect.top -= localPreY;
+        rect.bottom += localPosY;
+        localPreX = preX;
+        localPosX = posX;
+      }
 
-  //         if (model.style.flexDirection === "column") {
-  //           localPreX = preX;
-  //           localPosX = posX;
-  //           localPreY =
-  //             idx === 0
-  //               ? preY
-  //               : isSplitter(prev)
-  //               ? prev.computedStyle.height / 2
-  //               : 0;
-  //           localPosY =
-  //             idx === n
-  //               ? posY
-  //               : isSplitter(next)
-  //               ? next.computedStyle.height / 2
-  //               : 0;
-  //         } else {
-  //           localPreX =
-  //             idx === 0
-  //               ? preX
-  //               : isSplitter(prev)
-  //               ? prev.computedStyle.width / 2
-  //               : 0;
-  //           localPosX =
-  //             idx === n
-  //               ? posX
-  //               : isSplitter(next)
-  //               ? next.computedStyle.width / 2
-  //               : 0;
-  //           localPreY = preY;
-  //           localPosY = posY;
-  //         }
-  //       } else {
-  //         localPreX = preX;
-  //         localPosX = posX;
-  //         localPreY = preY;
-  //         localPosY = posY;
-  //       }
+      const componentMeasurements = measureComponent(
+        child,
+        rect,
+        el,
+        measurements
+      );
 
-  //     return arr;
-  //   }, [])
-  //   .filter((c) => c); // the dragging component will return undefined, unrendered tabbed children
-  // .sort(byPosition);
+      const childType = typeOf(child);
+      if (childType !== "Tabs" && isContainer(childType)) {
+        collectChildMeasurements(
+          child,
+          measurements,
+          localPreX,
+          localPosX,
+          localPreY,
+          localPosY
+        );
+      }
+      return componentMeasurements;
+    }
+  );
 
-  if (components.length) {
-    measurements[model.props.path].children = components;
+  if (childMeasurements.length) {
+    measurements[model.props.path].children = expandedMeasurements;
   }
+}
+
+function measureComponentDomElement(component) {
+  const el = document.getElementById(component.props.id);
+  if (!el) {
+    console.log(`No DOM for ${typeOf(component)}`);
+  }
+  let { top, left, right, bottom } = el.getBoundingClientRect();
+  return [{ top, left, right, bottom }, el, component];
 }
 
 function smallestBoxContainingPoint(component, measurements, x, y) {
@@ -333,13 +321,4 @@ function containsPoint(rect, x, y) {
   if (rect) {
     return x >= rect.left && x < rect.right && y >= rect.top && y < rect.bottom;
   }
-}
-
-function measureTabs(id) {
-  // Note the :scope selector is not supported on IE
-  return Array.from(
-    document.getElementById(id).querySelectorAll(`:scope > .Tabstrip .Tab`)
-  )
-    .map((tab) => tab.getBoundingClientRect())
-    .map(({ left, right }) => ({ left, right }));
 }

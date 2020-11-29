@@ -46,16 +46,16 @@ export default function App() {
         <Flexbox column style={{ height: 1000, width: 1200 }}>
           <Flexbox style={{ flex: 1 }}>
             <View
+              closeable
+              header
               resizeable
               style={{ minWidth: 50, width: 200 }}
               title="Left Panel"
             >
-              <StandardToolbar />
               <Red style={{ height: "100%" }} />
             </View>
             <Flexbox resizeable column style={{ flex: 1 }}>
-              <View resizeable style={{ flex: 1 }} title="Brown Bear">
-                <StandardToolbar />
+              <View header resizeable style={{ flex: 1 }} title="Brown Bear">
                 <Toolbar
                   id="palegoldenrod"
                   tools={[
@@ -77,8 +77,7 @@ export default function App() {
                 />
                 <Brown style={{ height: "100%" }} />
               </View>
-              <View resizeable style={{ flex: 1 }} title="Red Panda">
-                <StandardToolbar />
+              <View header resizeable style={{ flex: 1 }} title="Red Panda">
                 <Component style={{ backgroundColor: "red", height: "100%" }} />
               </View>
 
