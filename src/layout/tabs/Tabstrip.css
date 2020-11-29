@@ -1,10 +1,11 @@
 .Tabstrip {
+  align-items: center;
+  box-sizing: border-box;
   height: 36px;
   color: white;
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
   justify-content: flex-start;
-  box-sizing: border-box;
   position: relative;
 }
 

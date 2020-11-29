@@ -187,17 +187,16 @@ function dragDrop(state, action) {
     if (typeOf(target) === "Tabs") {
       let before, after;
       const tabIndex = pos.tab.index;
-      if (pos.tab.index === -1 || tabIndex >= target.children.length) {
+      if (pos.tab.index === -1 || tabIndex >= target.props.children.length) {
         ({
           props: { path: after }
-        } = target.children[target.children.length - 1]);
+        } = target.props.children[target.props.children.length - 1]);
       } else {
         ({
           props: { path: before }
-        } = target.children[tabIndex]);
+        } = target.props.children[tabIndex]);
       }
-      console.log("INSERT");
-      // return insert(state, source, null, before, after);
+      return insert(state, source, null, before, after);
     } else {
       console.log("WRAP");
       // return wrap(state, source, target, pos);
@@ -516,6 +515,7 @@ function _wrap(model, source, target, pos) {
 
 function insert(model, source, into, before, after, size) {
   const type = typeOf(model);
+  let { active } = model.props;
   const { path } = model.props;
   const target = before || after || into;
   let { idx, finalStep } = nextStep(path, target);
@@ -573,13 +573,16 @@ function insert(model, source, into, before, after, size) {
         }
         return arr;
       }, []);
+
+      if (type === "Tabs") {
+        active = children.indexOf(source);
+      }
     }
   } else {
     children = model.props.children.slice();
     children[idx] = insert(children[idx], source, into, before, after, size);
   }
-
-  return React.cloneElement(model, null, children);
+  return React.cloneElement(model, { ...model.props, active }, children);
 }
 
 function assignFlexDimension(model, dim, size) {

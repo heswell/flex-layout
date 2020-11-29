@@ -68,11 +68,11 @@ export default class DropTargetCanvas {
       if (sameDropTarget === false) {
         _dropTarget = dropTarget;
         _multiDropOptions = dropTarget.nextDropTarget != null;
-        if (isTabstrip(dropTarget)) {
-          moveExistingTabs(dropTarget);
-        } else {
-          clearShiftedTab();
-        }
+        // if (isTabstrip(dropTarget)) {
+        //   moveExistingTabs(dropTarget);
+        // } else {
+        //   clearShiftedTab();
+        // }
         this.drawTarget(dropTarget);
       }
 

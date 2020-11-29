@@ -5,3 +5,7 @@
 .TabPanel > * {
   height: 100%;
 }
+
+.TabPanel > .View > .Header {
+  display: none;
+}
