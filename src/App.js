@@ -45,13 +45,36 @@ export default function App() {
       <DraggableLayout onLayoutChange={handleLayoutChange} layout={layout}>
         <Flexbox column style={{ height: 1000, width: 1200 }}>
           <Flexbox style={{ flex: 1 }}>
-            <View resizeable style={{ minWidth: 50, width: 200 }}>
+            <View
+              resizeable
+              style={{ minWidth: 50, width: 200 }}
+              title="Left Panel"
+            >
               <StandardToolbar />
               <Red style={{ height: "100%" }} />
             </View>
             <Flexbox resizeable column style={{ flex: 1 }}>
               <View resizeable style={{ flex: 1 }} title="Brown Bear">
                 <StandardToolbar />
+                <Toolbar
+                  id="palegoldenrod"
+                  tools={[
+                    "close",
+                    "close",
+                    "close",
+                    [
+                      "PaddingTop",
+                      "PaddingRight",
+                      "PaddingBottom",
+                      "PaddingLeft"
+                    ],
+                    "close",
+                    "close",
+                    "close",
+                    "close",
+                    "close"
+                  ]}
+                />
                 <Brown style={{ height: "100%" }} />
               </View>
               <View resizeable style={{ flex: 1 }} title="Red Panda">

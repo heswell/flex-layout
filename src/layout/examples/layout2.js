@@ -1,56 +1,62 @@
 export const layout2 = () => ({
-  id: "ab014ba0-2b7c-11eb-824f-13a22c3d85aa",
-  path: "0",
-  style: {
-    height: 1000,
-    width: 1200,
-    display: "flex",
-    flexDirection: "column"
-  },
   type: "Flexbox",
+  props: {
+    vertical: true,
+    style: {
+      height: 1000,
+      width: 1200,
+      display: "flex",
+      flexDirection: "column"
+    }
+  },
   children: [
     {
-      path: "0.0",
-      style: {
-        flex: 1,
-        display: "flex",
-        flexDirection: "column"
-      },
       type: "Flexbox",
+      vertical: true,
+      props: {
+        style: {
+          flex: 1,
+          display: "flex",
+          flexDirection: "column"
+        }
+      },
       children: [
         {
-          path: "0.0.0",
-          resizeable: true,
-          style: {
-            backgroundColor: "lilac",
-            height: "auto",
-            flexBasis: 350,
-            flexShrink: 1,
-            flexGrow: 1
-          },
-          type: "Component"
+          type: "Component",
+          props: {
+            resizeable: true,
+            style: {
+              backgroundColor: "purple",
+              height: "auto",
+              flexBasis: 350,
+              flexShrink: 1,
+              flexGrow: 1
+            }
+          }
         },
         {
-          path: "0.0.1",
-          resizeable: true,
-          style: {
-            backgroundColor: "pink",
-            height: "auto",
-            flexBasis: 644,
-            flexShrink: 1,
-            flexGrow: 1
-          },
-          type: "Component"
+          type: "Component",
+          props: {
+            resizeable: true,
+            style: {
+              backgroundColor: "pink",
+              height: "auto",
+              flexBasis: 612,
+              flexShrink: 1,
+              flexGrow: 1
+            }
+          }
         }
       ]
     },
     {
-      path: "0.1",
-      style: {
-        backgroundColor: "green",
-        height: 32
-      },
-      type: "Component"
+      type: "Component",
+      props: {
+        style: {
+          backgroundColor: "green",
+          height: 32
+        }
+      }
     }
   ]
 });

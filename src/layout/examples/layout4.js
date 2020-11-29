@@ -1,177 +1,192 @@
 export const layout4 = () => ({
-  path: "0",
-  style: {
-    height: 1000,
-    width: 1200,
-    display: "flex",
-    flexDirection: "column"
-  },
   type: "Flexbox",
+  props: {
+    style: {
+      height: 1000,
+      width: 1200,
+      display: "flex",
+      flexDirection: "column"
+    }
+  },
   children: [
     {
-      path: "0.0",
-      style: {
-        flex: 1,
-        display: "flex",
-        flexDirection: "row"
-      },
       type: "Flexbox",
+      props: {
+        style: {
+          flex: 1,
+          display: "flex",
+          flexDirection: "row"
+        }
+      },
       children: [
         {
-          path: "0.0.0",
-          resizeable: true,
-          style: {
-            minWidth: 50,
-            width: 100
-          },
           type: "View",
+          props: {
+            resizeable: true,
+            style: {
+              minWidth: 50,
+              width: 100
+            }
+          },
           children: [
             {
-              path: "0",
-              style: {
-                height: "100%"
-              },
-              type: "Red"
-            },
-            "0.0.0.0"
+              type: "Red",
+              props: {
+                style: {
+                  height: "100%"
+                }
+              }
+            }
           ]
         },
         {
-          path: "0.0.1",
-          resizeable: true,
-          style: {
-            flex: 1,
-            display: "flex",
-            flexDirection: "column"
-          },
           type: "Flexbox",
+          props: {
+            resizeable: true,
+            style: {
+              flex: 1,
+              display: "flex",
+              flexDirection: "column"
+            }
+          },
           children: [
             {
-              path: "0.0.1.0",
-              resizeable: true,
-              style: {
-                flex: 1,
-                display: "flex",
-                flexDirection: "row",
-                height: "auto",
-                flexBasis: 336,
-                flexShrink: 1,
-                flexGrow: 1
-              },
               type: "Flexbox",
+              props: {
+                resizeable: true,
+                style: {
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "row",
+                  height: "auto",
+                  flexBasis: 336,
+                  flexShrink: 1,
+                  flexGrow: 1
+                }
+              },
               children: [
                 {
-                  path: "0.0.1.0.0",
-                  resizeable: true,
-                  style: {
-                    minWidth: 50,
-                    width: 150
-                  },
                   type: "View",
+                  props: {
+                    resizeable: true,
+                    style: {
+                      minWidth: 50,
+                      width: 150
+                    }
+                  },
                   children: [
                     {
-                      path: "0",
-                      style: {
-                        height: "100%"
-                      },
-                      type: "Brown"
-                    },
-                    "0.0.1.0.0.0"
+                      type: "Brown",
+                      props: {
+                        style: {
+                          height: "100%"
+                        }
+                      }
+                    }
                   ]
                 },
                 {
-                  path: "0.0.1.0.1",
-                  resizeable: true,
-                  style: {
-                    backgroundColor: "cornflowerblue",
-                    flexBasis: 0,
-                    flexGrow: 1,
-                    flexShrink: 1
-                  },
-                  type: "Component"
+                  type: "Component",
+                  props: {
+                    resizeable: true,
+                    style: {
+                      backgroundColor: "cornflowerblue",
+                      flexBasis: 0,
+                      flexGrow: 1,
+                      flexShrink: 1
+                    }
+                  }
                 },
                 {
-                  path: "0.0.1.0.2",
-                  resizeable: true,
-                  style: {
-                    backgroundColor: "palegoldenrod",
-                    flexBasis: 0,
-                    flexGrow: 1,
-                    flexShrink: 1
-                  },
-                  type: "Component"
+                  type: "Component",
+                  props: {
+                    resizeable: true,
+                    style: {
+                      backgroundColor: "palegoldenrod",
+                      flexBasis: 0,
+                      flexGrow: 1,
+                      flexShrink: 1
+                    }
+                  }
                 },
                 {
-                  path: "0.0.1.0.3",
-                  resizeable: true,
-                  style: {
-                    flex: 1,
-                    display: "flex",
-                    flexDirection: "column"
-                  },
                   type: "Flexbox",
+                  props: {
+                    resizeable: true,
+                    style: {
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column"
+                    }
+                  },
                   children: [
                     {
-                      path: "0.0.1.0.3.0",
-                      resizeable: true,
-                      style: {
-                        backgroundColor: "purple",
-                        flexBasis: 0,
-                        flexGrow: 1,
-                        flexShrink: 1
-                      },
-                      type: "Component"
+                      type: "Component",
+                      props: {
+                        resizeable: true,
+                        style: {
+                          backgroundColor: "purple",
+                          flexBasis: 0,
+                          flexGrow: 1,
+                          flexShrink: 1
+                        }
+                      }
                     },
                     {
-                      path: "0.0.1.0.3.1",
-                      resizeable: true,
-                      style: {
-                        backgroundColor: "lightgrey",
-                        flexBasis: 0,
-                        flexGrow: 1,
-                        flexShrink: 1
-                      },
-                      type: "Component"
+                      type: "Component",
+                      props: {
+                        resizeable: true,
+                        style: {
+                          backgroundColor: "lightgrey",
+                          flexBasis: 0,
+                          flexGrow: 1,
+                          flexShrink: 1
+                        }
+                      }
                     }
                   ]
                 }
               ]
             },
             {
-              path: "0.0.1.1",
-              resizeable: true,
-              style: {
-                backgroundColor: "pink",
-                flexBasis: 322,
-                flexGrow: 1,
-                flexShrink: 1,
-                height: "auto"
-              },
-              type: "Component"
+              type: "Component",
+              props: {
+                resizeable: true,
+                style: {
+                  backgroundColor: "pink",
+                  flexBasis: 322,
+                  flexGrow: 1,
+                  flexShrink: 1,
+                  height: "auto"
+                }
+              }
             },
             {
-              path: "0.0.1.2",
-              resizeable: true,
-              style: {
-                backgroundColor: "yellow",
-                flexBasis: 329,
-                flexGrow: 1,
-                flexShrink: 1,
-                height: "auto"
-              },
-              type: "Component"
+              type: "Component",
+              props: {
+                resizeable: true,
+                style: {
+                  backgroundColor: "yellow",
+                  flexBasis: 329,
+                  flexGrow: 1,
+                  flexShrink: 1,
+                  height: "auto"
+                }
+              }
             }
           ]
         }
       ]
     },
     {
-      path: "0.1",
-      style: {
-        backgroundColor: "green",
-        height: 32
-      },
-      type: "Component"
+      type: "Component",
+      props: {
+        style: {
+          backgroundColor: "green",
+          height: 32,
+          flexShrink: 0
+        }
+      }
     }
   ]
 });

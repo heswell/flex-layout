@@ -2,6 +2,7 @@
   align-items: flex-start;
   box-sizing: border-box;
   display: flex;
+  flex-shrink: 0;
   height: 32px;
   justify-content: flex-start;
   overflow: hidden;
