@@ -3,6 +3,7 @@ import { Brown, Red } from "./sample-components";
 import * as samples from "./layout/examples";
 import { CloseIcon as CloseAction } from "./layout/icons";
 import { registerComponent } from "./layout/registry/ComponentRegistry";
+import Palette from "./layout/palette/Palette";
 
 import {
   Component,
@@ -49,15 +50,13 @@ export default function App() {
           style={{ height: "90vh", width: "100vw" }}
         >
           <Flexbox style={{ flex: 1 }}>
-            <View
+            <Palette
               closeable
               header
               resizeable
               style={{ minWidth: 50, width: 200 }}
-              title="Left Panel"
-            >
-              <Red style={{ height: "100%" }} />
-            </View>
+              title="View Palette"
+            />
             <Flexbox resizeable column style={{ flex: 1 }}>
               <View header resizeable style={{ flex: 1 }} title="Brown Bear">
                 <Toolbar

@@ -152,9 +152,17 @@ function swapChild(model, child, replacement) {
   }
 }
 
-function dragStart(state, { dragRect, dragPos, instructions, path }) {
+/**
+ *  We wiill be passed a component to drag (with instructions)
+ * OR a path, which indicates that a component within the layout
+ * is to be extracted and dragged to a new position.
+ */
+function dragStart(
+  state,
+  { component, dragRect, dragPos, instructions, path }
+) {
   if (React.isValidElement(state)) {
-    var draggable = followPath(state, path);
+    var draggable = component || followPath(state, path);
 
     const newState = React.cloneElement(state, {
       drag: { dragRect, dragPos, dragPath: path, draggable }

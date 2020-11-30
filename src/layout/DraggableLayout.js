@@ -8,15 +8,20 @@ const EMPTY_OBJECT = {};
 // We need to add props to restrict drag behaviour to, for example, popups only
 const DraggableLayout = (inputProps) => {
   const prepareToDrag = useCallback(
-    ({ path, dragRect, instructions = EMPTY_OBJECT }, evt, xDiff, yDiff) => {
+    (
+      { component, dragRect, instructions = EMPTY_OBJECT, path },
+      evt,
+      xDiff,
+      yDiff
+    ) => {
       const dragPos = { x: evt.clientX, y: evt.clientY };
       // we need to wait for this to take effect before we continue with the drag
-      console.log(`DraggableLayout dragStarted`);
       dispatchLayoutAction({
         type: Action.DRAG_STARTED,
         path,
         dragRect,
         dragPos,
+        component,
         instructions
       });
     },
@@ -73,7 +78,6 @@ const DraggableLayout = (inputProps) => {
 
   const dragStart = useCallback(
     (draggable, dragRect, dragPos, dragPath, instructions) => {
-      // TODO are we using instructions ?
       var { top, left } = dragRect;
       // note: by passing null as dragContainer path, we are relying on registered DragContainer. How do we allow an
       // override for this ?

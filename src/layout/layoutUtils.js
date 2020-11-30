@@ -8,6 +8,10 @@ export const getManagedDimension = (style) =>
 
 const theKidHasNoStyle = {};
 
+export const applyLayoutProps = (component, dispatch) => {
+  return getLayoutChild(component, dispatch, "0");
+};
+
 export const applyLayout = (type, props, dispatch) => {
   console.log(`applyLayout ${type}`);
   if (type === "DraggableLayout") {

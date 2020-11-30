@@ -21,6 +21,9 @@ export const useViewActionDispatcher = (root, path, dispatch) => {
       handleClose();
     } else if (action.type === "mousedown") {
       handleMouseDown(evt, action.index);
+    } else if (Object.values(Action).includes(action.type)) {
+      // relay layout action
+      dispatch(action);
     }
   };
 
