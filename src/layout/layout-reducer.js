@@ -395,7 +395,11 @@ function wrap(model, source, target, pos) {
 function _wrapRoot(model, source, pos) {
   const { type, flexDirection } = getLayoutSpec(pos);
   const style = {
-    flexDirection
+    ...model.props.style,
+    flexDirection,
+    flexGrow: 1,
+    flexShrink: 1,
+    flexBasis: 0
   };
   // source only has position attributes because of dragging
   const {
@@ -408,6 +412,8 @@ function _wrapRoot(model, source, pos) {
       ? { flexGrow: 0, flexShrink: 0, flexBasis: pos[dim] }
       : { flex: 1 };
 
+  const targetFirst = pos.position.SouthOrEast || pos.position.Header;
+
   const nestedSource = React.cloneElement(source, {
     style: { ...sourceStyle, ...sourceFlex },
     resizeable: true
@@ -417,20 +423,19 @@ function _wrapRoot(model, source, pos) {
     style: { ...model.style, flex: 1 },
     resizeable: true
   });
-  debugger;
   var wrapper = React.createElement(
     ComponentRegistry[type],
     {
       id: uuid(),
       path: "0",
-      type,
       active,
+      dispatch: model.props.dispatch,
       style,
-      resizeable: model.resizeable
+      resizeable: true
     },
-    pos.position.SouthOrEast || pos.position.Header
-      ? [nestedTarget, nestedSource]
-      : [nestedSource, nestedTarget]
+    targetFirst
+      ? [resetPath(nestedTarget, "0.0"), resetPath(nestedSource, "0.1")]
+      : [resetPath(nestedSource, "0.0"), resetPath(nestedTarget, "0.1")]
   );
   return wrapper;
 }
