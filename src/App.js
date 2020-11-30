@@ -43,7 +43,11 @@ export default function App() {
   return (
     <>
       <DraggableLayout onLayoutChange={handleLayoutChange} layout={layout}>
-        <Flexbox column style={{ height: 1000, width: 1200 }}>
+        <Flexbox
+          className="App"
+          column
+          style={{ height: "90vh", width: "100vw" }}
+        >
           <Flexbox style={{ flex: 1 }}>
             <View
               closeable

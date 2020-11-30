@@ -21,3 +21,7 @@ body {
   font-family: OpenSans-Regular;
   text-align: center;
 }
+
+.App {
+  padding: 12px;
+}

@@ -29,6 +29,10 @@ export default function useTabstrip(
 
   useLayoutEffect(() => {
     if (activeIndicator) {
+      console.log(`useTabstrip useLAuoutEffect ${value}`);
+      if (!tabs[value]) {
+        debugger;
+      }
       const tabRect = tabs[value].current.measure();
       // we probably don't need to do this every time if we;re observng this anyway
       const rootRect = ref.current.getBoundingClientRect();

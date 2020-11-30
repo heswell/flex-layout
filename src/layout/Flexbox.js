@@ -1,4 +1,5 @@
 import React, { useCallback, useRef, useState } from "react";
+import cx from "classnames";
 import Splitter from "./Splitter";
 import useLayout from "./useLayout";
 import { Action } from "./layout-action";
@@ -23,7 +24,7 @@ const useSizesRef = () => {
 
 const Flexbox = function Flexbox(inputProps) {
   const [props, dispatch] = useLayout("Flexbox", inputProps);
-  const { children, id, path, style } = props;
+  const { children, className, id, path, style } = props;
   const isColumn = style.flexDirection === "column";
   const [sizesRef, setSizes, clearSizes] = useSizesRef([]);
   const dimension = isColumn ? "height" : "width";
@@ -96,7 +97,12 @@ const Flexbox = function Flexbox(inputProps) {
     return list;
   };
   return (
-    <div className="Flexbox" id={id} ref={rootRef} style={style}>
+    <div
+      className={cx("Flexbox", className)}
+      id={id}
+      ref={rootRef}
+      style={style}
+    >
       {children.reduce(injectSplitters, [])}
     </div>
   );

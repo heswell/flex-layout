@@ -223,28 +223,27 @@ function removeChild(state, { path }) {
 
 function _removeChild(model, child) {
   if (React.isValidElement(model)) {
+    let { active, path } = model.props;
     const { idx, finalStep } = nextStep(model.props.path, child.props.path);
+    const type = typeOf(model);
     let children = model.props.children.slice();
     if (finalStep) {
       children.splice(idx, 1);
-      // if (active !== undefined && active >= idx) {
-      //   active = Math.max(0, active - 1);
-      // }
+      if (active !== undefined && active >= idx) {
+        active = Math.max(0, active - 1);
+      }
 
-      const type = typeOf(model);
       if (children.length === 1 && type.match(/Flexbox|Tabs/)) {
         return unwrap(model, children[0]);
       }
     } else {
       children[idx] = _removeChild(children[idx], child);
     }
-    // Untested
-    children = children.map((child, i) =>
-      resetPath(child, `${model.props.path}.${i}`)
-    );
-
-    return React.cloneElement(model, null, children);
+    children = children.map((child, i) => resetPath(child, `${path}.${i}`));
+    return React.cloneElement(model, { active }, children);
   } else {
+    // TODO see if we can eliminate this branch. It's when we process a root
+    // which is not DraggableLayout
     const { idx, finalStep } = nextStep(model.path, child.props.path);
     let children = model.children.slice();
     let { active, path, type } = model;

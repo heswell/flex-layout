@@ -11,6 +11,7 @@ const DraggableLayout = (inputProps) => {
     ({ path, dragRect, instructions = EMPTY_OBJECT }, evt, xDiff, yDiff) => {
       const dragPos = { x: evt.clientX, y: evt.clientY };
       // we need to wait for this to take effect before we continue with the drag
+      console.log(`DraggableLayout dragStarted`);
       dispatchLayoutAction({
         type: Action.DRAG_STARTED,
         path,
