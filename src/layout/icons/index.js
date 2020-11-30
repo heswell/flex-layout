@@ -1,5 +1,6 @@
 export { default as AddIcon } from "./Add";
 export { default as CloseIcon } from "./Close";
+export { default as DragHandle } from "./DragHandle";
 export { default as MaximizeIcon } from "./Maximize";
 export { default as MinimizeIcon } from "./Minimize";
 export { default as MoreVerticalIcon } from "./MoreVertical";

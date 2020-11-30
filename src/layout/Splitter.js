@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import cx from "classnames";
 import "./Splitter.css";
 
@@ -11,6 +11,7 @@ const Splitter = React.memo(function Splitter({
   style
 }) {
   const lastPos = useRef(null);
+  const [active, setActive] = useState(false);
 
   const handleMouseMove = useCallback(
     (e) => {
@@ -30,8 +31,9 @@ const Splitter = React.memo(function Splitter({
       window.removeEventListener("mousemove", handleMouseMove, false);
       window.removeEventListener("mouseup", handleMouseUp, false);
       onDragEnd();
+      setActive(false);
     },
-    [handleMouseMove, onDragEnd]
+    [handleMouseMove, onDragEnd, setActive]
   );
 
   const handleMouseDown = useCallback(
@@ -41,12 +43,17 @@ const Splitter = React.memo(function Splitter({
       window.addEventListener("mousemove", handleMouseMove, false);
       window.addEventListener("mouseup", handleMouseUp, false);
       e.preventDefault();
+      setActive(true);
     },
-    [column, handleMouseMove, handleMouseUp, index, onDragStart]
+    [column, handleMouseMove, handleMouseUp, index, onDragStart, setActive]
   );
-  const className = cx("Splitter", { column });
+  const className = cx("Splitter", { active, column });
   return (
-    <div className={className} style={style} onMouseDown={handleMouseDown} />
+    <div
+      className={className}
+      style={style}
+      onMouseDown={handleMouseDown}
+    ></div>
   );
 });
 

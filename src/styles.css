@@ -4,6 +4,8 @@ body {
 }
 
 :root {
+  --background: white;
+  --blue500: #2670a9;
   --grey20: #eaedef;
   --grey40: #d9dde3;
   --grey60: #c5c9d0;
