@@ -183,6 +183,7 @@ function dragDrop(state, action) {
   const { draggable: source } = state.props.drag;
   const {
     dropTarget: { component: target, pos },
+    targetRect,
     targetPosition
   } = action;
 
@@ -216,7 +217,14 @@ function dragDrop(state, action) {
     //   replacement: source
     // });
   } else {
-    return dropLayoutIntoContainer(state, pos, source, target, targetPosition);
+    return dropLayoutIntoContainer(
+      state,
+      pos,
+      source,
+      target,
+      targetPosition,
+      targetRect
+    );
   }
 
   return React.cloneElement(state, {
@@ -322,7 +330,8 @@ function dropLayoutIntoContainer(
   pos,
   source,
   target,
-  targetPosition
+  targetPosition,
+  targetRect
 ) {
   if (target.props.path === "0") {
     if (typeOf(target) === "Surface") {
@@ -368,7 +377,8 @@ function dropLayoutIntoContainer(
           null,
           null,
           target.props.path,
-          pos.width || pos.height
+          pos.width || pos.height,
+          targetRect
         );
       } else {
         return insert(
@@ -377,7 +387,8 @@ function dropLayoutIntoContainer(
           null,
           target.props.path,
           null,
-          pos.width || pos.height
+          pos.width || pos.height,
+          targetRect
         );
       }
     } else if (againstTheGrain(pos, targetContainer)) {
@@ -528,7 +539,7 @@ function _wrap(model, source, target, pos) {
   return React.cloneElement(model, null, children);
 }
 
-function insert(model, source, into, before, after, size) {
+function insert(model, source, into, before, after, size, targetRect) {
   const type = typeOf(model);
   let { active } = model.props;
   const { path } = model.props;
@@ -547,25 +558,14 @@ function insert(model, source, into, before, after, size) {
     } else {
       const [dim] = getManagedDimension(model.props.style);
       // TODO take size into account here, within the calculateSizesOfFlexChildren function
-      // const measurements = calculateSizesOfFlexChildren(
-      //   model.props.children,
-      //   before || after,
-      //   dim,
-      //   { [dim]: size }
-      // );
+      //TODO how do we identify splitter width
+      //TODO checj reiizeable to make sure a splitter will be present
+      const measurement = (targetRect[dim] - 11) / 2;
       children = model.props.children.reduce((arr, child, i) => {
-        // idx of -1 means we just insert into end
-        const childIdx = arr.length;
         if (idx === i) {
           if (isFlexBox) {
-            source = assignFlexDimension(
-              source,
-              dim /*, measurements[childIdx]*/
-            );
-            child = assignFlexDimension(
-              child,
-              dim /*, measurements[childIdx + 1]*/
-            );
+            source = assignFlexDimension(source, dim, measurement);
+            child = assignFlexDimension(child, dim, measurement);
           } else {
             const {
               style: {
@@ -590,9 +590,8 @@ function insert(model, source, into, before, after, size) {
             arr.push(child, source);
           }
         } else {
-          arr.push(
-            assignFlexDimension(child, dim /*, measurements[childIdx]*/)
-          );
+          // arr.push(assignFlexDimension(child, dim, measurement));
+          arr.push(child);
         }
         return arr;
       }, []);
@@ -608,70 +607,40 @@ function insert(model, source, into, before, after, size) {
     }
   } else {
     children = model.props.children.slice();
-    children[idx] = insert(children[idx], source, into, before, after, size);
+    children[idx] = insert(
+      children[idx],
+      source,
+      into,
+      before,
+      after,
+      size,
+      targetRect
+    );
   }
   return React.cloneElement(model, { ...model.props, active }, children);
 }
 
 function assignFlexDimension(model, dim, size = 0) {
   const {
-    style: { flexBasis, height, width, ...otherStyles }
+    style: { flex, flexBasis, height, width, ...otherStyles }
   } = model.props;
   const { [dim]: currentSize } = { height, width };
 
-  if (flexBasis === "auto" && currentSize === size) {
+  if ((flexBasis === "auto" && currentSize === size) || flexBasis === size) {
     return model;
   }
 
-  // TODO get this right
-  // const resizeable = true;
-
   const style = {
     ...otherStyles,
-    // [dim]: size,
-    flexBasis: "auto",
-    flexGrow: 1,
-    flexShrink: 1
+    [dim]: "auto",
+    flexBasis: size,
+    flexGrow: 0,
+    flexShrink: 0
   };
 
   return React.cloneElement(model, {
     style
   });
-}
-
-// TODO this all needs revisiting
-function calculateSizesOfFlexChildren(layoutModels, target, dim, pos = {}) {
-  const children = layoutModels.map(
-    ({
-      props: {
-        path,
-        style: { flexBasis, [dim]: size }
-      }
-    }) => ({ path, flexBasis, size })
-  );
-
-  const newSize = pos[dim];
-
-  return children.reduce((acc, { path, flexBasis, size = flexBasis }) => {
-    if (path === target) {
-      let size1;
-      let size2;
-      if (newSize === undefined) {
-        size1 = Math.floor(size / 2);
-        size2 = size - size1;
-      } else {
-        // do we need to consider pos to determine which should be which ?
-        size1 = newSize;
-        size2 = size - size1;
-      }
-      acc.push(size1, size2);
-    } else if (flexBasis === "auto" && size !== undefined) {
-      acc.push(size);
-    } else {
-      acc.push(size);
-    }
-    return acc;
-  }, []);
 }
 
 // TODO do we still need surface

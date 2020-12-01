@@ -64,10 +64,11 @@ const DraggableLayout = (inputProps) => {
   const dragOperation = useRef(null);
 
   const handleDrop = useCallback(
-    (dropTarget) => {
+    (dropTarget, targetRect) => {
       dispatchLayoutAction({
         type: Action.DRAG_DROP,
         dropTarget,
+        targetRect,
         targetPosition: dragOperation.current.position
       });
       dragOperation.current = null;

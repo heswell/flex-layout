@@ -281,8 +281,10 @@ function measureComponentDomElement(component) {
   if (!el) {
     console.log(`No DOM for ${typeOf(component)}`);
   }
-  let { top, left, right, bottom } = el.getBoundingClientRect();
-  return [{ top, left, right, bottom }, el, component];
+  // Note: height and width are not required for dropTarget identification, but
+  // are used in sizing calculations on drop
+  let { top, left, right, bottom, height, width } = el.getBoundingClientRect();
+  return [{ top, left, right, bottom, height, width }, el, component];
 }
 
 function smallestBoxContainingPoint(component, measurements, x, y) {

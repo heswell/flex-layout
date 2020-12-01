@@ -225,10 +225,9 @@ function onDragEnd() {
       _dropTargetRenderer.hoverDropTarget ||
       DropTarget.getActiveDropTarget(_dropTarget);
 
-    // looking into eliminating this call altogether. We don't need it if we set the dragging index via
-    // top-level layout state
-
-    _dragCallback.drop(dropTarget, _measurements);
+    const { path } = dropTarget.component.props;
+    const targetRect = _measurements[path];
+    _dragCallback.drop(dropTarget, targetRect);
 
     _dropTarget = null;
   } else {
