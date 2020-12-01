@@ -392,9 +392,9 @@ function dropLayoutIntoContainer(
         );
       }
     } else if (againstTheGrain(pos, targetContainer)) {
-      return wrap(layoutModel, source, target, pos);
+      return wrap(layoutModel, source, target, pos, targetRect);
     } else if (isContainer(targetContainer)) {
-      return wrap(layoutModel, source, target, pos);
+      return wrap(layoutModel, source, target, pos, targetRect);
     } else {
       console.log("no support right now for position = " + pos.position);
     }
@@ -404,13 +404,13 @@ function dropLayoutIntoContainer(
 }
 
 // this is replaceChild with extras
-function wrap(model, source, target, pos) {
+function wrap(model, source, target, pos, targetRect) {
   return target.props.path === model.props.path
-    ? _wrapRoot(model, source, pos)
-    : _wrap(model, source, target, pos);
+    ? _wrapRoot(model, source, pos, targetRect)
+    : _wrap(model, source, target, pos, targetRect);
 }
 
-function _wrapRoot(model, source, pos) {
+function _wrapRoot(model, source, pos, targetRect) {
   const { type, flexDirection } = getLayoutSpec(pos);
   const style = {
     ...model.props.style,
@@ -458,7 +458,7 @@ function _wrapRoot(model, source, pos) {
   return wrapper;
 }
 
-function _wrap(model, source, target, pos) {
+function _wrap(model, source, target, pos, targetRect) {
   const { idx, finalStep } = nextStep(model.props.path, target.props.path);
   const children = model.props.children.slice();
 
@@ -469,47 +469,31 @@ function _wrap(model, source, target, pos) {
 
     // TODO handle scenario where items have been resized, so have flexBasis values set
     const style = {
-      flexDirection,
-      // TODO these need to come from source
-      flexBasis: 0,
-      flexGrow: 1,
-      flexShrink: 1
+      ...target.props.style,
+      flexDirection
     };
 
-    // If we're going to render source in a flex container, can we allow the dimensions
-    // to be managed by flex ? Assume yes if the component is resizeable.
-    const [dim] = getManagedDimension(style);
-
-    // const measurements = calculateSizesOfFlexChildren(
-    //   [target],
-    //   target.props.path,
-    //   dim,
-    //   pos
-    // );
-    // const nestedSource = assignFlexDimension(source, dim, measurements[0]);
-    // const nestedTarget = assignFlexDimension(target, dim, measurements[1]);
     // This assumes flexBox ...
+    const flexStyles = {
+      flexBasis: 0,
+      flexGrow: 1,
+      flexShrink: 1,
+      width: "auto",
+      height: "auto"
+    };
     const targetFirst = pos.position.SouthOrEast || pos.position.Header;
     const nestedSource = React.cloneElement(source, {
       path: `${target.props.path}.${targetFirst ? 1 : 0}`,
       style: {
         ...source.props.style,
-        flexBasis: 0,
-        flexGrow: 1,
-        flexShrink: 1,
-        width: "auto",
-        height: "auto"
+        ...flexStyles
       }
     });
     const nestedTarget = React.cloneElement(target, {
       path: `${target.props.path}.${targetFirst ? 0 : 1}`,
       style: {
         ...target.props.style,
-        flexBasis: 0,
-        flexGrow: 1,
-        flexShrink: 1,
-        width: "auto",
-        height: "auto"
+        ...flexStyles
       }
     });
 
@@ -534,7 +518,7 @@ function _wrap(model, source, target, pos) {
 
     children.splice(idx, 1, wrapper);
   } else {
-    children[idx] = _wrap(children[idx], source, target, pos);
+    children[idx] = _wrap(children[idx], source, target, pos, targetRect);
   }
   return React.cloneElement(model, null, children);
 }
