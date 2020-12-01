@@ -542,10 +542,10 @@ function insert(model, source, into, before, after, size, targetRect) {
       // TODO take size into account here, within the calculateSizesOfFlexChildren function
       //TODO how do we identify splitter width
       //TODO checj reiizeable to make sure a splitter will be present
-      const measurement = (targetRect[dim] - 11) / 2;
       children = model.props.children.reduce((arr, child, i) => {
         if (idx === i) {
           if (isFlexBox) {
+            const measurement = (targetRect[dim] - 11) / 2;
             source = assignFlexDimension(source, dim, measurement);
             child = assignFlexDimension(child, dim, measurement);
           } else {
