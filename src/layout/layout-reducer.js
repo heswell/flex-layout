@@ -284,7 +284,6 @@ function _removeChild(model, child) {
   }
 }
 
-// Untested
 function unwrap(state, child) {
   const type = typeOf(state);
   const {
@@ -295,15 +294,14 @@ function unwrap(state, child) {
 
   let unwrappedChild = resetPath(child, path);
   if (path === "0") {
-    unwrappedChild = {
-      ...unwrappedChild,
+    unwrappedChild = React.cloneElement(unwrappedChild, {
       drag,
       style: {
         ...child.style,
         width,
         height
       }
-    };
+    });
   } else if (type === "Flexbox") {
     const dim =
       state.props.style.flexDirection === "column" ? "height" : "width";
