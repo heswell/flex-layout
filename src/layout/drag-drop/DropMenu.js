@@ -1,29 +1,43 @@
 import React from "react";
-
+import cx from "classnames";
+import { Column2A, Column2B } from "../icons";
 import "./DropMenu.css";
 
 export function computeMenuPosition(dropTarget, offsetTop = 0, offsetLeft = 0) {
   const { pos, clientRect: box } = dropTarget;
   return pos.position.West
-    ? [box.left - offsetLeft + 26, pos.y - offsetTop]
+    ? [box.left - offsetLeft + 26, pos.y - offsetTop, "left"]
     : pos.position.South
-    ? [pos.x - offsetLeft, box.bottom - offsetTop - 26]
+    ? [pos.x - offsetLeft, box.bottom - offsetTop - 26, "bottom"]
     : pos.position.East
-    ? [box.right - offsetLeft - 26, pos.y - offsetTop]
-    : /* North | Header*/ [pos.x - offsetLeft, box.top - offsetTop + 26];
+    ? [box.right - offsetLeft - 26, pos.y - offsetTop, "right"]
+    : /* North | Header*/ [pos.x - offsetLeft, box.top - offsetTop + 26, "top"];
 }
 
-const DropMenu = ({ dropTarget, onHover }) => {
+const getIcon = (i) => {
+  if (i === 0) {
+    return <Column2A />;
+  } else {
+    return <Column2B />;
+  }
+};
+
+const DropMenu = ({ className, dropTarget, onHover, orientation }) => {
   const dropTargets = dropTarget.toArray();
 
   return (
-    <div className="drop-menu" onMouseLeave={() => onHover(null)}>
+    <div
+      className={cx("DropMenu", className, orientation)}
+      onMouseLeave={() => onHover(null)}
+    >
       {dropTargets.map((target, i) => (
         <div
           key={i}
           className="drop-menu-item"
           onMouseEnter={() => onHover(target)}
-        />
+        >
+          {getIcon(i)}
+        </div>
       ))}
     </div>
   );

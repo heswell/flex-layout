@@ -1,5 +1,7 @@
 export { default as AddIcon } from "./Add";
 export { default as CloseIcon } from "./Close";
+export { default as Column2A } from "./Column2A";
+export { default as Column2B } from "./Column2B";
 export { default as DragHandle } from "./DragHandle";
 export { default as MaximizeIcon } from "./Maximize";
 export { default as MinimizeIcon } from "./Minimize";

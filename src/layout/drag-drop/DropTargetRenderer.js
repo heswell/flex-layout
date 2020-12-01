@@ -78,10 +78,14 @@ export default class DropTargetCanvas {
       }
 
       if (_multiDropOptions) {
-        const [left, top] = computeMenuPosition(dropTarget);
+        const [left, top, orientation] = computeMenuPosition(dropTarget);
         if (!wasMultiDrop || !sameDropTarget) {
           const component = (
-            <DropMenu dropTarget={dropTarget} onHover={onHoverDropTarget} />
+            <DropMenu
+              dropTarget={dropTarget}
+              onHover={onHoverDropTarget}
+              orientation={orientation}
+            />
           );
           PopupService.showPopup({
             left,
