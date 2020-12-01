@@ -436,7 +436,14 @@ function _wrapRoot(model, source, pos, targetRect) {
   });
 
   const nestedTarget = React.cloneElement(model, {
-    style: { ...model.style, flex: 1 },
+    style: {
+      ...model.props.style,
+      flexBasis: 0,
+      flexGrow: 1,
+      flexShrink: 1,
+      width: "auto",
+      height: "auto"
+    },
     resizeable: true
   });
   var wrapper = React.createElement(
