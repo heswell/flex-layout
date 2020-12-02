@@ -546,15 +546,28 @@ function insert(model, source, into, before, after, size, targetRect) {
       children = model.children.concat(source);
     } else {
       const [dim] = getManagedDimension(model.props.style);
-      // TODO take size into account here, within the calculateSizesOfFlexChildren function
       //TODO how do we identify splitter width
       //TODO checj reiizeable to make sure a splitter will be present
+      function assignSizes(rect, dim, size) {
+        if (typeof size === "number") {
+          return [size, rect[dim] - size - 11];
+        } else {
+          const measurement = (targetRect[dim] - 11) / 2;
+          return [measurement, measurement];
+        }
+      }
+
       children = model.props.children.reduce((arr, child, i) => {
         if (idx === i) {
           if (isFlexBox) {
-            const measurement = (targetRect[dim] - 11) / 2;
-            source = assignFlexDimension(source, dim, measurement);
-            child = assignFlexDimension(child, dim, measurement);
+            const [sourceMeasurement, childMeasurement] = assignSizes(
+              targetRect,
+              dim,
+              size
+            );
+            // TODO if size is supplied, it must be respected
+            source = assignFlexDimension(source, dim, sourceMeasurement);
+            child = assignFlexDimension(child, dim, childMeasurement);
           } else {
             const {
               style: {

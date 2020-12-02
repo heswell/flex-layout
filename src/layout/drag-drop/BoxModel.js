@@ -206,11 +206,25 @@ function collectChildMeasurements(
   //onsole.log(`   collectChildMeasurements	x:${x}	y:${y}	preX:${preX}	posX:${posX}	preY:${preY}	posY:${posY}`);
 
   const type = typeOf(model);
+  const isFlexbox = type === "Flexbox";
+  const isTower = isFlexbox && model.props.style.flexDirection === "column";
+  const isTerrace = isFlexbox && model.props.style.flexDirection === "row";
 
   // Collect all the measurements in first pass ...
-  const childMeasurements = model.props.children.map(
-    measureComponentDomElement
-  );
+  const childMeasurements = model.props.children.map((child) => {
+    const [rect, el] = measureComponentDomElement(child);
+    return [
+      {
+        ...rect,
+        top: rect.top - preY,
+        right: rect.right + posX,
+        bottom: rect.bottom + posY,
+        left: rect.left - preX
+      },
+      el,
+      child
+    ];
+  });
 
   // ...so that, in the second pass, we can identify gaps ...
   const expandedMeasurements = childMeasurements.map(
@@ -223,26 +237,26 @@ function collectChildMeasurements(
       let gapPre;
       let gapPos;
       const n = all.length - 1;
-      if (type === "Flexbox" && model.props.style.flexDirection === "row") {
+      if (isTerrace) {
         gapPre = i === 0 ? 0 : rect.left - all[i - 1][0].right;
         gapPos = i === n ? 0 : all[i + 1][0].left - rect.right;
-        localPreX = i === 0 ? preX : gapPre === 0 ? 0 : gapPre / 2;
-        localPosX = i === n ? posX : gapPos === 0 ? 0 : gapPos - gapPos / 2;
+        // we don't need to divide the leading gap, as half the gap will
+        // already have been assigned to the preceeding child in the
+        // previous loop iteration.
+        localPreX = i === 0 ? 0 : gapPre === 0 ? 0 : gapPre;
+        localPosX = i === n ? 0 : gapPos === 0 ? 0 : gapPos - gapPos / 2;
         rect.left -= localPreX;
         rect.right += localPosX;
         localPreY = preY;
         localPosY = posY;
-      } else if (
-        type === "Flexbox" &&
-        model.props.style.flexDirection === "column"
-      ) {
+      } else if (isTower) {
         gapPre = i === 0 ? 0 : rect.top - all[i - 1][0].bottom;
         gapPos = i === n ? 0 : all[i + 1][0].top - rect.bottom;
         // we don't need to divide the leading gap, as half the gap will
         // already have been assigned to the preceeding child in the
         // previous loop iteration.
-        localPreY = i === 0 ? preY : gapPre === 0 ? 0 : gapPre;
-        localPosY = i === n ? posY : gapPos === 0 ? 0 : gapPos - gapPos / 2;
+        localPreY = i === 0 ? 0 : gapPre === 0 ? 0 : gapPre;
+        localPosY = i === n ? 0 : gapPos === 0 ? 0 : gapPos - gapPos / 2;
         rect.top -= localPreY;
         rect.bottom += localPosY;
         localPreX = preX;
